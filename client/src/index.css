@@ -1,0 +1,81 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --bg-canvas: #09090b;
+    --bg-canvas-pattern: #27272a;
+    --surface-1: #121215;
+    --surface-2: #18181b;
+    --surface-3: #27272a;
+    --surface-hover: #222226;
+    --surface-active: #2e2e33;
+    --border-subtle: rgba(255, 255, 255, 0.08);
+    --border-focus: rgba(255, 255, 255, 0.22);
+    --text-primary: #f4f4f5;
+    --text-secondary: #a1a1aa;
+    --text-tertiary: #71717a;
+    --text-faint: #52525b;
+    --selection-fill: rgba(255, 255, 255, 0.04);
+    --selection-stroke: rgba(255, 255, 255, 0.35);
+  }
+
+  [data-theme="light"] {
+    --bg-canvas: #fbfbfb;
+    --bg-canvas-pattern: #d4d4d8;
+    --surface-1: #ffffff;
+    --surface-2: #f4f4f5;
+    --surface-3: #e4e4e7;
+    --surface-hover: #ebebee;
+    --surface-active: #dfdfe3;
+    --border-subtle: rgba(0, 0, 0, 0.08);
+    --border-focus: rgba(0, 0, 0, 0.25);
+    --text-primary: #09090b;
+    --text-secondary: #52525b;
+    --text-tertiary: #71717a;
+    --text-faint: #a1a1aa;
+    --selection-fill: rgba(0, 0, 0, 0.04);
+    --selection-stroke: rgba(0, 0, 0, 0.35);
+  }
+
+  body {
+    background-color: var(--bg-canvas);
+    color: var(--text-primary);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    user-select: none;
+    overflow: hidden;
+    margin: 0;
+    padding: 0;
+    width: 100vw;
+    height: 100vh;
+  }
+}
+
+/* Custom scrollbar for minimal B&W feel */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--surface-3);
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-tertiary);
+}
+
+/* Canvas utilities */
+.canvas-grid {
+  background-image: radial-gradient(var(--bg-canvas-pattern) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+.canvas-grid-dense {
+  background-image: radial-gradient(var(--bg-canvas-pattern) 1px, transparent 1px);
+  background-size: 16px 16px;
+}
