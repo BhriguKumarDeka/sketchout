@@ -149,3 +149,107 @@
 .animate-bee-4 {
   animation: bee-drift-4 4.8s ease-in-out infinite;
 }
+
+/* Bee Patrol across the hero image from one end to the other */
+@keyframes bee-patrol-1 {
+  0% {
+    left: 5%;
+    top: -24px;
+    transform: scaleX(1);
+  }
+  48% {
+    left: 88%;
+    top: -46px;
+    transform: scaleX(1);
+  }
+  50% {
+    left: 88%;
+    top: -46px;
+    transform: scaleX(-1);
+  }
+  98% {
+    left: 5%;
+    top: -24px;
+    transform: scaleX(-1);
+  }
+  100% {
+    left: 5%;
+    top: -24px;
+    transform: scaleX(1);
+  }
+}
+
+@keyframes bee-patrol-2 {
+  0% {
+    left: 86%;
+    top: -42px;
+    transform: scaleX(-1);
+  }
+  48% {
+    left: 6%;
+    top: -18px;
+    transform: scaleX(-1);
+  }
+  50% {
+    left: 6%;
+    top: -18px;
+    transform: scaleX(1);
+  }
+  98% {
+    left: 86%;
+    top: -42px;
+    transform: scaleX(1);
+  }
+  100% {
+    left: 86%;
+    top: -42px;
+    transform: scaleX(-1);
+  }
+}
+
+/* Signature rapid waggle movement */
+@keyframes bee-waggle-dance-1 {
+  0%, 100% {
+    transform: translateY(0px) rotate(-14deg);
+  }
+  25% {
+    transform: translateY(-4px) rotate(14deg);
+  }
+  50% {
+    transform: translateY(2px) rotate(-10deg);
+  }
+  75% {
+    transform: translateY(-3px) rotate(12deg);
+  }
+}
+
+@keyframes bee-waggle-dance-2 {
+  0%, 100% {
+    transform: translateY(0px) rotate(12deg);
+  }
+  25% {
+    transform: translateY(-3px) rotate(-14deg);
+  }
+  50% {
+    transform: translateY(3px) rotate(10deg);
+  }
+  75% {
+    transform: translateY(-2px) rotate(-10deg);
+  }
+}
+
+.animate-bee-patrol-1 {
+  animation: bee-patrol-1 14s ease-in-out infinite;
+}
+
+.animate-bee-patrol-2 {
+  animation: bee-patrol-2 17s ease-in-out infinite;
+}
+
+.animate-bee-waggle-1 {
+  animation: bee-waggle-dance-1 0.28s ease-in-out infinite;
+}
+
+.animate-bee-waggle-2 {
+  animation: bee-waggle-dance-2 0.32s ease-in-out infinite;
+}

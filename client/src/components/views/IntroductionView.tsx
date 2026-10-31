@@ -5,24 +5,6 @@ import {
   ChevronDown,
 } from 'lucide-react';
 
-interface BeeConfig {
-  id: number;
-  leftPercent: number;
-  topPx: number;
-  sizePx: number;
-  animClass: string;
-  delaySec: number;
-}
-
-const BEES: BeeConfig[] = [
-  { id: 1, leftPercent: 18, topPx: -22, sizePx: 38, animClass: 'animate-bee-1', delaySec: 0 },
-  { id: 2, leftPercent: 32, topPx: -34, sizePx: 32, animClass: 'animate-bee-2', delaySec: 0.8 },
-  { id: 3, leftPercent: 50, topPx: -40, sizePx: 42, animClass: 'animate-bee-3', delaySec: 1.4 },
-  { id: 4, leftPercent: 66, topPx: -26, sizePx: 30, animClass: 'animate-bee-4', delaySec: 0.3 },
-  { id: 5, leftPercent: 82, topPx: -32, sizePx: 36, animClass: 'animate-bee-1', delaySec: 1.9 },
-  { id: 6, leftPercent: 42, topPx: -14, sizePx: 26, animClass: 'animate-bee-2', delaySec: 2.2 },
-];
-
 const FAQS = [
   {
     question: "What makes Sketch Out different from other whiteboards?",
@@ -84,55 +66,49 @@ export const IntroductionView: React.FC = () => {
       </nav>
 
       {/* Hero Section */}
-      <section className="pt-14 pb-16 px-6 max-w-4xl mx-auto flex flex-col items-center text-center">
-        {/* Exact Hero Text Requested */}
-        <h1 className="text-4xl sm:text-6xl md:text-7xl font-extrabold text-zinc-950 tracking-tight leading-none mb-12">
+      <section className="pt-16 sm:pt-20 pb-20 px-6 max-w-4xl mx-auto flex flex-col items-center text-center">
+        {/* Exact Hero Text with generous breathing space below */}
+        <h1 className="text-4xl sm:text-6xl md:text-7xl font-extrabold text-zinc-950 tracking-tight leading-none mb-24 sm:mb-32">
           welcome to sketch out
         </h1>
 
-        {/* Hero Image Centerpiece with Floating Bees */}
-        <div className="relative w-full max-w-3xl mt-4">
-          {/* Floating Bees hovered across the upper floral side */}
-          <div className="absolute inset-x-0 top-0 h-16 pointer-events-none z-20">
-            {BEES.map((b) => (
-              <div
-                key={b.id}
-                className={`absolute ${b.animClass}`}
-                style={{
-                  left: `${b.leftPercent}%`,
-                  top: `${b.topPx}px`,
-                  animationDelay: `${b.delaySec}s`,
-                }}
-              >
-                <img
-                  src="/assets/bee_cropped.png"
-                  alt="Floating Bee"
-                  className="drop-shadow-sm select-none transition-transform"
-                  style={{ width: `${b.sizePx}px`, height: 'auto' }}
-                />
-              </div>
-            ))}
-          </div>
-
-          {/* Hero Image Card */}
-          <div className="relative rounded-3xl bg-white p-3 sm:p-4 border border-zinc-200/90 shadow-[0_20px_50px_-15px_rgba(0,0,0,0.07)] overflow-hidden">
-            <div className="relative rounded-2xl overflow-hidden bg-zinc-50 border border-zinc-100 flex items-center justify-center">
+        {/* Standalone Hero Image with Exactly Two Waggle Bees moving from end to end */}
+        <div className="relative w-full max-w-3xl">
+          {/* Exactly Two Bees traversing the upper floral region with signature waggle */}
+          <div className="absolute inset-x-0 -top-8 h-20 pointer-events-none z-20 overflow-visible">
+            {/* Bee 1: Left to right waggle patrol */}
+            <div className="absolute animate-bee-patrol-1">
               <img
-                src="/assets/heroImage.png"
-                alt="Sketch Out Artwork"
-                className="w-full h-auto object-cover max-h-[480px] select-none"
+                src="/assets/bee_cropped.png"
+                alt="Waggle Bee"
+                className="w-9 h-auto drop-shadow-xs select-none animate-bee-waggle-1"
               />
             </div>
+
+            {/* Bee 2: Right to left waggle patrol */}
+            <div className="absolute animate-bee-patrol-2">
+              <img
+                src="/assets/bee_cropped.png"
+                alt="Waggle Bee"
+                className="w-8 h-auto drop-shadow-xs select-none animate-bee-waggle-2"
+              />
+            </div>
+          </div>
+
+          {/* Standalone Artwork - Completely removed any background, box, or border */}
+          <div className="relative w-full flex items-center justify-center">
+            <img
+              src="/assets/heroImage.png"
+              alt="Sketch Out Artwork"
+              className="w-full h-auto object-contain max-h-[520px] select-none"
+            />
           </div>
         </div>
       </section>
 
-      {/* The Essence of Sketch Out (No AI slop, genuine human craft) */}
+      {/* The Essence of Sketch Out (No AI slop, no meta tags) */}
       <section className="py-20 px-6 max-w-3xl mx-auto border-t border-zinc-200/70">
         <div className="space-y-6 text-center sm:text-left">
-          <span className="text-xs font-mono uppercase tracking-wider text-zinc-400">
-            The Essence
-          </span>
           <h2 className="text-2xl sm:text-3xl font-bold text-zinc-950 tracking-tight leading-snug">
             Thinking shouldn't feel like filling out forms.
           </h2>
@@ -174,11 +150,8 @@ export const IntroductionView: React.FC = () => {
       {/* Hector AI Interactive Section (hectorImage.png in middle, left & right dialogue on hover) */}
       <section className="py-24 px-6 bg-white border-y border-zinc-200/70 overflow-hidden">
         <div className="max-w-4xl mx-auto flex flex-col items-center">
-          <div className="text-center mb-8">
-            <span className="text-xs font-mono uppercase tracking-wider text-zinc-400">
-              Meet Hector
-            </span>
-            <p className="text-xs text-zinc-500 mt-1">
+          <div className="text-center mb-6">
+            <p className="text-xs text-zinc-400">
               (Hover over Hector to see what he's thinking)
             </p>
           </div>
@@ -213,7 +186,7 @@ export const IntroductionView: React.FC = () => {
               <img
                 src="/assets/hectorImage.png"
                 alt="Hector AI"
-                className="w-full h-auto object-contain drop-shadow-md select-none"
+                className="w-full h-auto object-contain drop-shadow-sm select-none"
               />
             </div>
 
@@ -238,7 +211,7 @@ export const IntroductionView: React.FC = () => {
         </div>
       </section>
 
-      {/* FAQ Accordion */}
+      {/* FAQ Accordion (No uppercase section header) */}
       <section className="py-20 px-6 max-w-2xl mx-auto">
         <h2 className="text-xl font-bold text-zinc-950 tracking-tight text-center mb-8">
           Frequently asked questions
@@ -274,7 +247,7 @@ export const IntroductionView: React.FC = () => {
         </div>
       </section>
 
-      {/* Minimal Footer: Just the Back to Sketch Button as requested */}
+      {/* Minimal Footer: Just the Back to Sketch Button */}
       <footer className="py-16 px-6 flex flex-col items-center justify-center border-t border-zinc-200/70">
         <button
           onClick={() => setActiveView('canvas')}
