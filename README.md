@@ -3,9 +3,17 @@
 > **Context-Aware Visual Thinking & Execution Workspace**  
 > A high-performance spatial whiteboard that transforms visual brainstorming and architectural diagrams into executable living documentation, structured decisions, and AI-synthesized specifications.
 
+<p align="center">
+  <img src="assets/introduction.png" alt="SketchOut Introduction Landing Page" width="100%" />
+</p>
+
+<p align="center">
+  <img src="assets/workspace.png" alt="SketchOut Workspace & Infinite Canvas" width="100%" />
+</p>
+
 ---
 
-## ✦ Overview
+## Overview
 
 Traditional whiteboard tools treat diagrams as passive pixels and disconnected vectors. **SketchOut** bridges spatial thinking and software execution: every geometric node, sticky note, connector, and section boundary feeds into a continuous **Semantic Context Graph**. 
 
@@ -13,7 +21,7 @@ Powered by Groq Cloud's ultra-fast **`openai/gpt-oss-120b`** reasoning engine wi
 
 ---
 
-## ✦ Key Features
+## Key Features
 
 - **Infinite 2D Viewport**: Freeform canvas with hardware-accelerated 60fps pan and non-linear cursor-centered zoom ($10\% - 500\%$).
 - **Figma-Style Sections (`F`)**: Visual boundary containers with top header tab pills. Enclosed child elements move together as cohesive workflows and provide scoped sub-contexts for AI reasoning.
@@ -29,7 +37,7 @@ Powered by Groq Cloud's ultra-fast **`openai/gpt-oss-120b`** reasoning engine wi
 
 ---
 
-## ✦ Architecture Overview
+## Architecture Overview
 
 ```mermaid
 flowchart TD
@@ -78,7 +86,7 @@ flowchart TD
 
 ---
 
-## ✦ Project Structure
+## Project Structure
 
 ```
 Sketchout/
@@ -107,7 +115,7 @@ Sketchout/
 
 ---
 
-## ✦ Tech Stack
+## Tech Stack
 
 | Layer | Technology |
 | :--- | :--- |
@@ -120,7 +128,7 @@ Sketchout/
 
 ---
 
-## ✦ Quick Start
+## Quick Start
 
 ### 1. Prerequisites
 - **Node.js** v18+ (v20+ recommended)
@@ -160,7 +168,7 @@ npm run dev
 
 ---
 
-## ✦ Canvas Shortcuts & Controls
+## Canvas Shortcuts & Controls
 
 | Shortcut | Tool / Action |
 | :---: | :--- |
@@ -186,7 +194,7 @@ npm run dev
 
 ---
 
-## ✦ API Reference Summary
+## API Reference Summary
 
 | Method | Endpoint | Description |
 | :--- | :--- | :--- |
@@ -204,6 +212,6 @@ npm run dev
 
 ---
 
-## ✦ License
+## License
 
 Distributed under the MIT License. See `LICENSE` for more information.
