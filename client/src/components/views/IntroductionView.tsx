@@ -72,25 +72,43 @@ export const IntroductionView: React.FC = () => {
           welcome to sketch out
         </h1>
 
-        {/* Standalone Hero Image with Exactly Two Waggle Bees moving from end to end */}
+        {/* Standalone Hero Image with Four Waggle Bees (Two main non-mirrored + two smaller random micro-orbit bees) */}
         <div className="relative w-full max-w-3xl">
-          {/* Exactly Two Bees traversing the upper floral region with signature waggle */}
+          {/* Four Bees buzzing across the upper floral region */}
           <div className="absolute inset-x-0 -top-8 h-20 pointer-events-none z-20 overflow-visible">
-            {/* Bee 1: Left to right waggle patrol */}
-            <div className="absolute animate-bee-patrol-1">
+            {/* Bee 1: Wide asymmetrical sweeping traverse across the canopy */}
+            <div className="absolute animate-bee-path-1">
               <img
                 src="/assets/bee_cropped.png"
-                alt="Waggle Bee"
+                alt="Explorer Bee"
                 className="w-9 h-auto drop-shadow-xs select-none animate-bee-waggle-1"
               />
             </div>
 
-            {/* Bee 2: Right to left waggle patrol */}
-            <div className="absolute animate-bee-patrol-2">
+            {/* Bee 2: Mid-sized bee with completely non-mirrored meandering arc and rhythm */}
+            <div className="absolute animate-bee-path-2">
               <img
                 src="/assets/bee_cropped.png"
-                alt="Waggle Bee"
+                alt="Forager Bee"
                 className="w-8 h-auto drop-shadow-xs select-none animate-bee-waggle-2"
+              />
+            </div>
+
+            {/* Bee 3: Smaller body with small organic random fluttering over left flowers */}
+            <div className="absolute animate-bee-path-3">
+              <img
+                src="/assets/bee_cropped.png"
+                alt="Little Bee"
+                className="w-5 h-auto drop-shadow-xs select-none animate-bee-waggle-micro"
+              />
+            </div>
+
+            {/* Bee 4: Tiny body with small random inquisitive motion over right flowers */}
+            <div className="absolute animate-bee-path-4">
+              <img
+                src="/assets/bee_cropped.png"
+                alt="Tiny Bee"
+                className="w-4 h-auto drop-shadow-xs select-none animate-bee-waggle-micro"
               />
             </div>
           </div>
