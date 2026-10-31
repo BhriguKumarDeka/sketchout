@@ -53,7 +53,7 @@ export type ToolType =
 
 export type ResizeHandle = 'nw' | 'n' | 'ne' | 'e' | 'se' | 's' | 'sw' | 'w';
 
-export type ViewMode = 'canvas' | 'graph' | 'ledger' | 'artifacts';
+export type ViewMode = 'canvas' | 'graph' | 'ledger' | 'artifacts' | 'intro';
 
 export interface Point {
   x: number;

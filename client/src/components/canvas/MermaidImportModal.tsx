@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useCanvasStore } from '../../store/useCanvasStore';
 import { parseMermaidCode } from '../../utils/mermaidParser';
 import { syncConnectedArrows } from '../../store/arrowSync';
-import { X, Code2, Sparkles, ArrowRight, AlertCircle } from 'lucide-react';
+import { X, Code2, Bookmark, ArrowRight, AlertCircle } from 'lucide-react';
 
 interface MermaidImportModalProps {
   isOpen: boolean;
@@ -125,7 +125,7 @@ export const MermaidImportModal: React.FC<MermaidImportModalProps> = ({ isOpen, 
           {/* Quick templates */}
           <div className="flex items-center gap-2">
             <span className="text-[11px] text-[var(--text-tertiary)] flex items-center gap-1">
-              <Sparkles className="w-3 h-3 text-zinc-400" /> Templates:
+              <Bookmark className="w-3 h-3 text-zinc-400" /> Templates:
             </span>
             {SAMPLE_TEMPLATES.map((tmpl) => (
               <button

@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useCanvasStore } from '../../store/useCanvasStore';
 import {
-  Sparkles,
   AlertCircle,
   FileCode2,
   GitGraph,
@@ -112,14 +111,32 @@ export const HeaderBar: React.FC = () => {
     <header className="h-13 w-full bg-[var(--surface-1)] border-b border-[var(--border-subtle)] px-4 flex items-center justify-between z-40 select-none">
       {/* Brand & Workspace Switcher */}
       <div className="flex items-center gap-3">
-        <div className="flex items-center gap-2">
-          <div className="w-5 h-5 rounded-md bg-zinc-100 flex items-center justify-center">
-            <span className="w-2.5 h-2.5 bg-zinc-950 rounded-sm" />
+        {/* Brand Logo with Tactile Inset Squircle - Click to open Introduction page */}
+        <button
+          onClick={() => setActiveView(activeView === 'intro' ? 'canvas' : 'intro')}
+          className={`flex items-center gap-2.5 group text-left cursor-pointer transition-all active:scale-95 px-1.5 py-1 rounded-xl ${
+            activeView === 'intro' ? 'bg-[var(--surface-2)] shadow-xs' : 'hover:bg-[var(--surface-hover)]'
+          }`}
+          title="Visit Sketch Out Introduction & Guide"
+        >
+          <div className="w-7 h-7 rounded-[9px] bg-white flex items-center justify-center shadow-[inset_0_2px_4px_rgba(0,0,0,0.14),0_2px_6px_rgba(0,0,0,0.12)] border border-black/10 overflow-hidden p-1 transition-all group-hover:scale-105 group-hover:shadow-[inset_0_2px_4px_rgba(0,0,0,0.2),0_3px_8px_rgba(0,0,0,0.16)]">
+            <img
+              src="/assets/penLogo_cropped.png"
+              alt="Sketch Out Pen"
+              className="w-full h-full object-contain"
+            />
           </div>
-          <span className="font-semibold text-sm tracking-tight text-[var(--text-primary)]">
-            sketch out
-          </span>
-        </div>
+          <div className="flex flex-col">
+            <span className="font-semibold text-sm tracking-tight text-[var(--text-primary)] leading-tight">
+              sketch out
+            </span>
+            {activeView === 'intro' && (
+              <span className="text-[9px] text-[var(--text-tertiary)] font-medium leading-none">
+                Introduction
+              </span>
+            )}
+          </div>
+        </button>
 
         <div className="w-[1px] h-4 bg-[var(--border-subtle)]" />
 
@@ -392,17 +409,20 @@ export const HeaderBar: React.FC = () => {
           )}
         </button>
 
-        {/* Ask Canvas AI Assistant */}
+        {/* Hector AI Assistant */}
         <button
           onClick={() => setActiveDrawer(activeDrawer === 'ask' ? 'none' : 'ask')}
-          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+          className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium transition-colors ${
             activeDrawer === 'ask'
-              ? 'bg-zinc-100 text-zinc-950 font-semibold'
+              ? 'bg-zinc-100 text-zinc-950 font-semibold shadow-xs'
               : 'bg-[var(--surface-2)] text-[var(--text-primary)] hover:bg-[var(--surface-hover)] border border-[var(--border-subtle)]'
           }`}
+          title="Ask Hector AI about your whiteboard flow"
         >
-          <Sparkles className="w-3.5 h-3.5" />
-          <span>Ask Canvas</span>
+          <div className="w-4 h-4 rounded-full overflow-hidden border border-zinc-600 bg-zinc-800 shrink-0">
+            <img src="/assets/hector_avatar.png" alt="Hector AI" className="w-full h-full object-cover" />
+          </div>
+          <span>Hector AI</span>
         </button>
 
         <div className="w-[1px] h-4 bg-[var(--border-subtle)] mx-0.5" />

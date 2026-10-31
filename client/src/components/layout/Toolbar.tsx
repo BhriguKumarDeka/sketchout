@@ -11,7 +11,6 @@ import {
   Diamond,
   Database,
   ArrowUpRight,
-  Pencil,
   Type,
   Eraser,
   Frame,
@@ -52,7 +51,12 @@ export const Toolbar: React.FC = () => {
   const tools: ToolButton[] = [
     { tool: 'select', label: 'Select', icon: <MousePointer className="w-4 h-4" />, shortcut: 'V' },
     { tool: 'pan', label: 'Hand', icon: <Hand className="w-4 h-4" />, shortcut: 'H' },
-    { tool: 'draw', label: 'Pen / Draw', icon: <Pencil className="w-4 h-4" />, shortcut: 'P' },
+    {
+      tool: 'draw',
+      label: 'Pen / Draw',
+      icon: <img src="/assets/pencil_cursor.png" alt="Pen" className="w-3.5 h-3.5 object-contain" />,
+      shortcut: 'P',
+    },
     { tool: 'sticky', label: 'Sticky Note', icon: <StickyNote className="w-4 h-4" />, shortcut: 'S' },
     { tool: 'rectangle', label: 'Rectangle', icon: <Square className="w-4 h-4" />, shortcut: 'R' },
     { tool: 'ellipse', label: 'Ellipse', icon: <Circle className="w-4 h-4" />, shortcut: 'O' },

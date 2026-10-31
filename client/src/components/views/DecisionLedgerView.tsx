@@ -3,7 +3,6 @@ import { useCanvasStore } from '../../store/useCanvasStore';
 import {
   Plus,
   Target,
-  Sparkles,
   CheckCircle2,
   Clock,
   XCircle,
@@ -95,8 +94,8 @@ export const DecisionLedgerView: React.FC = () => {
             disabled={isExtracting}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs bg-[var(--surface-2)] hover:bg-[var(--surface-hover)] text-[var(--text-primary)] border border-[var(--border-subtle)] transition-colors"
           >
-            <Sparkles className="w-3.5 h-3.5 text-zinc-300" />
-            <span>{isExtracting ? 'Analyzing...' : 'Auto-Extract from Canvas'}</span>
+            <img src="/assets/hector_avatar.png" alt="Hector" className="w-3.5 h-3.5 rounded-full object-cover" />
+            <span>{isExtracting ? 'Analyzing...' : 'Auto-Extract with Hector'}</span>
           </button>
 
           <button

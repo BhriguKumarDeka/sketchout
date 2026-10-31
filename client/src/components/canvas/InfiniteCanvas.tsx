@@ -84,7 +84,7 @@ export const InfiniteCanvas: React.FC = () => {
 
   const getCursorClass = () => {
     if (isPanning || isSpacePressed || activeTool === 'pan') return 'cursor-grab active:cursor-grabbing';
-    if (activeTool === 'draw') return 'cursor-crosshair';
+    if (activeTool === 'draw') return 'cursor-pencil';
     if (activeTool === 'arrow') return 'cursor-crosshair';
     if (activeTool === 'eraser') return 'cursor-not-allowed';
     if (

@@ -7,6 +7,7 @@ import { InfiniteCanvas } from './components/canvas/InfiniteCanvas';
 import { ContextGraphView } from './components/views/ContextGraphView';
 import { DecisionLedgerView } from './components/views/DecisionLedgerView';
 import { ArtifactsView } from './components/views/ArtifactsView';
+import { IntroductionView } from './components/views/IntroductionView';
 import { AskCanvasDrawer } from './components/ai/AskCanvasDrawer';
 import { GapDetectorModal } from './components/ai/GapDetectorModal';
 import { ToastNotification } from './components/layout/ToastNotification';
@@ -37,6 +38,7 @@ export const App: React.FC = () => {
         {activeView === 'graph' && <ContextGraphView />}
         {activeView === 'ledger' && <DecisionLedgerView />}
         {activeView === 'artifacts' && <ArtifactsView />}
+        {activeView === 'intro' && <IntroductionView />}
 
         {/* AI Sliding Drawers */}
         <AskCanvasDrawer />

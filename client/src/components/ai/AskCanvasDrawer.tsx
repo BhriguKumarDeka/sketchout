@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { useCanvasStore } from '../../store/useCanvasStore';
 import { api } from '../../services/api';
 import {
-  Sparkles,
   X,
   Send,
   CornerDownRight,
@@ -35,8 +34,8 @@ export const AskCanvasDrawer: React.FC = () => {
   >([
     {
       role: 'assistant',
-      content: 'I understand your entire visual canvas topology and semantic context. Ask me anything about your architecture, decisions, open questions, or dependencies.',
-      followUps: ['What have we decided?', 'What remains unresolved?', 'Explain this architecture'],
+      content: "Hey, I'm Hector! I understand your whiteboard topology, shapes, and connections. Ask me anything about your diagram flow, architecture decisions, or next steps!",
+      followUps: ['What is the core essence?', 'Can we elaborate on each transition?', 'What remains unresolved?'],
     },
   ]);
 
@@ -84,13 +83,15 @@ export const AskCanvasDrawer: React.FC = () => {
     <div className="absolute top-13 right-0 bottom-0 w-96 bg-[var(--surface-1)] border-l border-[var(--border-subtle)] flex flex-col z-30 shadow-sm animate-in slide-in-from-right duration-200">
       {/* Header */}
       <div className="p-3.5 border-b border-[var(--border-subtle)] flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <Sparkles className="w-4 h-4 text-zinc-100" />
+        <div className="flex items-center gap-2.5">
+          <div className="w-6 h-6 rounded-full overflow-hidden border border-zinc-700 bg-zinc-800 shrink-0">
+            <img src="/assets/hector_avatar.png" alt="Hector AI" className="w-full h-full object-cover" />
+          </div>
           <span className="text-xs font-semibold text-[var(--text-primary)]">
-            Ask Canvas
+            Hector AI
           </span>
           <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-[var(--surface-2)] text-[var(--text-tertiary)]">
-            {aiStatus.isLiveGroq ? 'Groq AI' : 'Context Engine'}
+            {aiStatus.isLiveGroq ? 'Groq 120B' : 'Local Context'}
           </span>
         </div>
         <button
