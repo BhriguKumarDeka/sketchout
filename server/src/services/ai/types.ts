@@ -111,6 +111,18 @@ export interface DiagramFlowContext {
   sections?: Array<{ id: string; title: string; nodes: CanvasElementData[] }>;
 }
 
+export interface FlowCompletionSuggestion {
+  label: string;
+  type?: 'rectangle' | 'ellipse' | 'diamond' | 'cylinder';
+  relation?: string;
+  semanticType?: string;
+}
+
+export interface FlowCompletionResult {
+  suggestions: FlowCompletionSuggestion[];
+  rationale?: string;
+}
+
 export interface IAIProvider {
   name: string;
   isLive(): boolean;
@@ -118,4 +130,5 @@ export interface IAIProvider {
   detectGaps(context: CanvasContextPayload): Promise<GapDetectionResult>;
   generateArtifact(artifactType: string, context: CanvasContextPayload): Promise<ArtifactGenerationResult>;
   askCanvas(question: string, context: CanvasContextPayload): Promise<AskCanvasResult>;
+  completeFlow(elementId: string, context: CanvasContextPayload): Promise<FlowCompletionResult>;
 }

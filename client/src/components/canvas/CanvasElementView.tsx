@@ -18,6 +18,7 @@ interface CanvasElementViewProps {
   element: CanvasElement;
   isSelected: boolean;
   isHighlighted: boolean;
+  isEditing?: boolean;
   onStartResize: (e: React.MouseEvent, handle: ResizeHandle, element: CanvasElement) => void;
   onStartTextEdit: (element: CanvasElement) => void;
   onStartArrowEndpointDrag?: (e: React.MouseEvent, arrow: CanvasElement, endpointIndex: 0 | 1) => void;
@@ -50,6 +51,7 @@ export const CanvasElementView: React.FC<CanvasElementViewProps> = ({
   element,
   isSelected,
   isHighlighted,
+  isEditing = false,
   onStartResize,
   onStartTextEdit,
   onStartArrowEndpointDrag,
@@ -331,17 +333,19 @@ export const CanvasElementView: React.FC<CanvasElementViewProps> = ({
             stroke={isSelected ? (isLight ? '#18181b' : '#f4f4f5') : (isLight ? '#e4e4e7' : '#3f3f46')}
             strokeWidth={1}
           />
-          <text
-            x={10}
-            y={-9}
-            fill={isLight ? '#18181b' : '#f4f4f5'}
-            fontSize={12}
-            fontWeight="600"
-            letterSpacing="0.02em"
-            fontFamily="system-ui, -apple-system, sans-serif"
-          >
-            {element.content?.trim() || 'Section'}
-          </text>
+          {!isEditing && (
+            <text
+              x={10}
+              y={-9}
+              fill={isLight ? '#18181b' : '#f4f4f5'}
+              fontSize={12}
+              fontWeight="600"
+              letterSpacing="0.02em"
+              fontFamily="system-ui, -apple-system, sans-serif"
+            >
+              {element.content?.trim() || 'Section'}
+            </text>
+          )}
           {/* Main Enclosing Frame Body */}
           <rect
             x={0}
@@ -418,7 +422,7 @@ export const CanvasElementView: React.FC<CanvasElementViewProps> = ({
       )}
 
       {/* Text Inside Shape / Note (Non-frame shapes) */}
-      {element.content && !isFrame && (
+      {element.content && !isFrame && !isEditing && (
         <foreignObject
           x={
             isDiamond
@@ -481,7 +485,7 @@ export const CanvasElementView: React.FC<CanvasElementViewProps> = ({
         </foreignObject>
       )}
 
-      {!element.content && isText && (
+      {!element.content && isText && !isEditing && (
         <text
           x={8}
           y={24}

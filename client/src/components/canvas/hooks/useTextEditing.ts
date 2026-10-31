@@ -10,6 +10,10 @@ export interface EditingState {
   width: number;
   height: number;
   text: string;
+  elementType?: string;
+  fontSize?: number;
+  textAlign?: 'left' | 'center' | 'right';
+  strokeColor?: string;
 }
 
 export function useTextEditing() {
@@ -49,6 +53,10 @@ export function useTextEditing() {
       width: el.width || 180,
       height: el.height || 60,
       text: el.content || '',
+      elementType: el.type,
+      fontSize: el.style.fontSize,
+      textAlign: el.style.textAlign,
+      strokeColor: el.style.strokeColor,
     });
   };
 
@@ -58,9 +66,13 @@ export function useTextEditing() {
       isNew: true,
       x: worldX,
       y: worldY,
-      width: 200,
+      width: 220,
       height: 48,
       text: '',
+      elementType: 'text',
+      fontSize: activeStyle.fontSize || 16,
+      textAlign: activeStyle.textAlign || 'left',
+      strokeColor: activeStyle.strokeColor,
     });
   };
 

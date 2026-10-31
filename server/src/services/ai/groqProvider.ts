@@ -6,6 +6,7 @@ import {
   GapDetectionResult,
   ArtifactGenerationResult,
   AskCanvasResult,
+  FlowCompletionResult,
 } from './types.js';
 import { extractDiagramFlowContext } from './contextExtractor.js';
 import { HeuristicAIProvider } from './heuristicProvider.js';
@@ -243,6 +244,53 @@ Respond ONLY in valid JSON matching this schema:
     } catch (err: any) {
       console.warn('[Groq Provider] askCanvas failed, using heuristic fallback:', err?.message);
       return this.fallback.askCanvas(question, context);
+    }
+  }
+
+  async completeFlow(elementId: string, context: CanvasContextPayload): Promise<FlowCompletionResult> {
+    try {
+      const { elements, workspaceName = 'sketch out' } = context;
+      const flow = extractDiagramFlowContext(elements, workspaceName);
+
+      let targetNode = elements.find(
+        (e) => (e.elementId === elementId || e.id === elementId) && e.type !== 'arrow'
+      );
+      if (!targetNode && flow.boxes.length > 0) {
+        targetNode = flow.boxes[flow.boxes.length - 1];
+      }
+
+      const activeLabel = targetNode?.content?.trim() || 'Active Step';
+      const flowSummary = flow.connections.map((c) => `${c.sourceLabel} -> ${c.targetLabel}`).join(', ') || activeLabel;
+
+      const systemPrompt = `You are an expert whiteboard partner. Suggest exactly 2 logical downstream next steps and transitions to complete the active flow. Keep labels under 4 words. Use minimal tokens.
+Respond ONLY in valid JSON matching this schema:
+{
+  "suggestions": [
+    { "label": "Short Next Step", "type": "rectangle|ellipse|diamond|cylinder", "relation": "short verb" },
+    { "label": "Short Final Outcome", "type": "rectangle|ellipse|diamond|cylinder", "relation": "short verb" }
+  ],
+  "rationale": "One brief sentence"
+}`;
+
+      const completion = await this.groq.chat.completions.create({
+        messages: [
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: `Current Flow: [${flowSummary}]. Active Step: "${activeLabel}". Suggest the next 2 steps.` },
+        ],
+        model: this.model,
+        temperature: 0.3,
+        max_tokens: 150,
+        response_format: { type: 'json_object' },
+      });
+
+      const parsed = JSON.parse(completion.choices[0]?.message?.content || '{}');
+      return {
+        suggestions: parsed.suggestions || [],
+        rationale: parsed.rationale || 'Suggested downstream flow steps.',
+      };
+    } catch (err: any) {
+      console.warn('[Groq Provider] completeFlow failed, using heuristic fallback:', err?.message);
+      return this.fallback.completeFlow(elementId, context);
     }
   }
 }

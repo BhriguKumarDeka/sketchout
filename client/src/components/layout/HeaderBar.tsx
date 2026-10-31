@@ -19,7 +19,9 @@ import {
   Download,
   Upload,
   Check,
+  Code2,
 } from 'lucide-react';
+import { MermaidImportModal } from '../canvas/MermaidImportModal';
 
 export const HeaderBar: React.FC = () => {
   const {
@@ -51,6 +53,7 @@ export const HeaderBar: React.FC = () => {
   const [newWorkspaceName, setNewWorkspaceName] = useState('');
   const [isCreatingWorkspace, setIsCreatingWorkspace] = useState(false);
   const [isCopyModalOpen, setIsCopyModalOpen] = useState(false);
+  const [isMermaidModalOpen, setIsMermaidModalOpen] = useState(false);
   const [selectedSourceWs, setSelectedSourceWs] = useState('');
 
   const menuRef = useRef<HTMLDivElement>(null);
@@ -252,6 +255,17 @@ export const HeaderBar: React.FC = () => {
                   <Upload className="w-3.5 h-3.5" />
                   <span>Import Canvas from JSON</span>
                 </button>
+
+                <button
+                  onClick={() => {
+                    setIsMermaidModalOpen(true);
+                    setIsWorkspaceMenuOpen(false);
+                  }}
+                  className="w-full flex items-center gap-1.5 px-2 py-1.5 rounded-lg text-left text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-hover)] transition-colors"
+                >
+                  <Code2 className="w-3.5 h-3.5" />
+                  <span>Import Mermaid Code...</span>
+                </button>
               </div>
             </div>
           )}
@@ -334,6 +348,16 @@ export const HeaderBar: React.FC = () => {
 
       {/* Right Actions & AI Controls */}
       <div className="flex items-center gap-2">
+        {/* Mermaid Code Import */}
+        <button
+          onClick={() => setIsMermaidModalOpen(true)}
+          className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-hover)] border border-[var(--border-subtle)] transition-colors"
+          title="Import Mermaid flowchart/architecture diagram"
+        >
+          <Code2 className="w-3.5 h-3.5 text-zinc-400" />
+          <span className="hidden md:inline">Mermaid</span>
+        </button>
+
         {/* Gap Detector */}
         <button
           onClick={() => runGapDetection()}
@@ -449,6 +473,12 @@ export const HeaderBar: React.FC = () => {
           </div>
         </div>
       )}
+
+      {/* Mermaid Import Modal */}
+      <MermaidImportModal
+        isOpen={isMermaidModalOpen}
+        onClose={() => setIsMermaidModalOpen(false)}
+      />
     </header>
   );
 };

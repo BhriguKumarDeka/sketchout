@@ -119,6 +119,7 @@ export interface TraceableNode {
 
 export interface ArtifactRecord {
   artifactId: string;
+  workspaceId?: string;
   type: 'prd' | 'tech_spec' | 'action_items' | 'meeting_summary' | 'risk_assessment' | 'synthesis';
   title: string;
   content: string;

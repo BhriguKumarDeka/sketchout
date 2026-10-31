@@ -18,6 +18,8 @@ export const AskCanvasDrawer: React.FC = () => {
     setActiveDrawer,
     focusElement,
     aiStatus,
+    completeFlowAction,
+    isCompletingFlow,
   } = useCanvasStore();
 
   const [inputQuestion, setInputQuestion] = useState('');
@@ -52,11 +54,14 @@ export const AskCanvasDrawer: React.FC = () => {
     try {
       const res = await api.askCanvas(q, workspaceId, elements, askMode);
       if (res.result) {
+        // Sanitize any accidental internal element ID leaks in the answer
+        const cleanAnswer = (res.result.answer || '').replace(/\s*\((?:ID\s+)?elem-[a-zA-Z0-9_-]+\)/g, '');
+
         setMessages([
           ...newMessages,
           {
             role: 'assistant',
-            content: res.result.answer,
+            content: cleanAnswer,
             references: res.result.referencedElementIds,
             followUps: res.result.suggestedFollowUps,
           },
@@ -122,6 +127,20 @@ export const AskCanvasDrawer: React.FC = () => {
         </button>
       </div>
 
+      {/* Quick Flow Auto-Completion Bar */}
+      <div className="px-3.5 py-1.5 border-b border-[var(--border-subtle)] bg-[var(--surface-1)] flex items-center justify-between">
+        <span className="text-[11px] text-[var(--text-tertiary)]">Whiteboard Assistant:</span>
+        <button
+          onClick={() => completeFlowAction()}
+          disabled={isCompletingFlow || elements.filter((e) => e.type !== 'arrow').length === 0}
+          className="flex items-center gap-1 px-2 py-1 rounded-md bg-[var(--surface-2)] hover:bg-[var(--surface-hover)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] border border-[var(--border-subtle)] text-[11px] font-medium transition-colors disabled:opacity-40"
+          title="Predicts and adds the next 2 logical steps into the diagram (<150 tokens)"
+        >
+          <Zap className="w-3 h-3 text-amber-500 fill-amber-500" />
+          <span>{isCompletingFlow ? 'Generating steps...' : 'Auto-Complete Flow'}</span>
+        </button>
+      </div>
+
       {/* Messages Scroll Area */}
       <div className="flex-1 overflow-y-auto p-4 space-y-4 text-xs">
         {messages.map((m, idx) => (
@@ -144,18 +163,23 @@ export const AskCanvasDrawer: React.FC = () => {
               {m.references && m.references.length > 0 && (
                 <div className="mt-2.5 pt-2 border-t border-[var(--border-subtle)] flex flex-wrap items-center gap-1">
                   <span className="text-[10px] text-[var(--text-tertiary)] flex items-center gap-0.5">
-                    <Target className="w-2.5 h-2.5" /> Cited Nodes:
+                    <Target className="w-2.5 h-2.5" /> Cited Concepts:
                   </span>
-                  {m.references.map((nodeId) => (
-                    <button
-                      key={nodeId}
-                      onClick={() => focusElement(nodeId)}
-                      className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-[var(--surface-3)] text-zinc-300 hover:text-white hover:bg-zinc-700 transition-colors flex items-center gap-1"
-                    >
-                      <span>#{nodeId.slice(0, 6)}</span>
-                      <CornerDownRight className="w-2.5 h-2.5 opacity-60" />
-                    </button>
-                  ))}
+                  {m.references.map((nodeId) => {
+                    const el = elements.find((e) => e.id === nodeId || (e as any).elementId === nodeId);
+                    const label = el?.content?.trim() || nodeId.slice(0, 8);
+                    return (
+                      <button
+                        key={nodeId}
+                        onClick={() => focusElement(nodeId)}
+                        className="text-[10px] font-medium px-2 py-0.5 rounded bg-[var(--surface-3)] text-zinc-300 hover:text-white hover:bg-zinc-700 transition-colors flex items-center gap-1"
+                        title={`Focus "${label}"`}
+                      >
+                        <span className="truncate max-w-[120px]">{label}</span>
+                        <CornerDownRight className="w-2.5 h-2.5 opacity-60" />
+                      </button>
+                    );
+                  })}
                 </div>
               )}
             </div>

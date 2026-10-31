@@ -346,14 +346,22 @@ router.post('/:workspaceId/decisions', async (req: Request, res: Response) => {
   }
 });
 
-// 10. Artifacts CRUD (with DELETE)
+// 10. Artifacts CRUD (with Global Search, Unconditional Delete, and Cross-Workspace Import)
 router.get('/:workspaceId/artifacts', async (req: Request, res: Response) => {
   const workspaceId = String(req.params.workspaceId);
+  const scope = req.query.scope as string;
+
   try {
-    const artifacts = await ArtifactModel.find({ workspaceId }).sort({ createdAt: -1 });
-    return res.json({ success: true, artifacts });
+    const filter = scope === 'all' ? {} : { workspaceId };
+    const artifacts = await ArtifactModel.find(filter).sort({ createdAt: -1 });
+    return res.json({ success: true, artifacts, scope: scope || 'workspace' });
   } catch (err) {
-    return res.json({ success: true, artifacts: memoryDb.artifacts.get(workspaceId) || [] });
+    if (scope === 'all') {
+      const all: any[] = [];
+      memoryDb.artifacts.forEach((list) => all.push(...list));
+      return res.json({ success: true, artifacts: all, scope: 'all' });
+    }
+    return res.json({ success: true, artifacts: memoryDb.artifacts.get(workspaceId) || [], scope: 'workspace' });
   }
 });
 
@@ -372,16 +380,61 @@ router.post('/:workspaceId/artifacts', async (req: Request, res: Response) => {
   }
 });
 
-router.delete('/:workspaceId/artifacts/:artifactId', async (req: Request, res: Response) => {
+router.post('/:workspaceId/artifacts/:artifactId/import', async (req: Request, res: Response) => {
   const workspaceId = String(req.params.workspaceId);
   const artifactId = String(req.params.artifactId);
 
   try {
-    await ArtifactModel.deleteOne({ workspaceId, artifactId });
+    const existing = await ArtifactModel.findOne({ artifactId });
+    if (!existing) {
+      return res.status(404).json({ error: 'Artifact not found' });
+    }
+
+    if (existing.workspaceId === workspaceId) {
+      return res.json({ success: true, artifact: existing, message: 'Already belongs to this workspace' });
+    }
+
+    const newArtifactId = `art-${Date.now()}`;
+    const cloned = await ArtifactModel.create({
+      artifactId: newArtifactId,
+      workspaceId,
+      type: existing.type,
+      title: `${existing.title} (Imported)`,
+      content: existing.content,
+      traceableNodes: existing.traceableNodes,
+    });
+
+    return res.json({ success: true, artifact: cloned });
+  } catch (err: any) {
+    // Memory fallback
+    let found: any = null;
+    memoryDb.artifacts.forEach((list) => {
+      const match = list.find((a: any) => a.artifactId === artifactId);
+      if (match) found = match;
+    });
+
+    if (found) {
+      const cloned = { ...found, artifactId: `art-${Date.now()}`, workspaceId, title: `${found.title} (Imported)` };
+      const current = memoryDb.artifacts.get(workspaceId) || [];
+      current.unshift(cloned);
+      memoryDb.artifacts.set(workspaceId, current);
+      return res.json({ success: true, artifact: cloned, isFallbackMode: true });
+    }
+    return res.status(500).json({ error: err?.message || 'Failed to import artifact' });
+  }
+});
+
+router.delete('/:workspaceId/artifacts/:artifactId', async (req: Request, res: Response) => {
+  const artifactId = String(req.params.artifactId);
+
+  try {
+    // Unconditionally delete by artifactId so orphaned records across any workspace are genuinely erased
+    await ArtifactModel.deleteMany({ artifactId });
     return res.json({ success: true, artifactId });
   } catch (err) {
-    const list = memoryDb.artifacts.get(workspaceId) || [];
-    memoryDb.artifacts.set(workspaceId, list.filter((a: any) => a.artifactId !== artifactId));
+    memoryDb.artifacts.forEach((list, key) => {
+      memoryDb.artifacts.set(key, list.filter((a: any) => a.artifactId !== artifactId));
+    });
     return res.json({ success: true, artifactId, isFallbackMode: true });
   }
 });

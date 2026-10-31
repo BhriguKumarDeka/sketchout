@@ -6,7 +6,6 @@ import { useCanvasZoom } from './hooks/useCanvasZoom';
 import { useCanvasKeyboard } from './hooks/useCanvasKeyboard';
 import { useTextEditing } from './hooks/useTextEditing';
 import { useCanvasInteraction } from './hooks/useCanvasInteraction';
-import { Check } from 'lucide-react';
 
 export const InfiniteCanvas: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -144,6 +143,7 @@ export const InfiniteCanvas: React.FC = () => {
               element={el}
               isSelected={selectedIds.includes(el.id)}
               isHighlighted={highlightedElementId === el.id}
+              isEditing={editingState?.id === el.id}
               onStartResize={handleStartResize}
               onStartTextEdit={handleStartTextEdit}
               onStartArrowEndpointDrag={handleStartArrowEndpointDrag}
@@ -229,64 +229,88 @@ export const InfiniteCanvas: React.FC = () => {
         </g>
       </svg>
 
-      {/* Floating Inline Text Editor Overlay */}
+      {/* Seamless In-Shape Text Editor (Miro / FigJam style) */}
       {editingState && (
-        <div
-          className="absolute z-50 pointer-events-auto"
-          style={{
-            left: `${editingState.x * viewport.zoom + viewport.x}px`,
-            top: `${editingState.y * viewport.zoom + viewport.y}px`,
-            width: `${Math.max(editingState.width * viewport.zoom, 180)}px`,
-            minHeight: `${Math.max(editingState.height * viewport.zoom, 50)}px`,
-          }}
-          onMouseDown={(e) => e.stopPropagation()}
-          onMouseUp={(e) => e.stopPropagation()}
-          onClick={(e) => e.stopPropagation()}
-          onPointerDown={(e) => e.stopPropagation()}
-        >
-          <div className="relative w-full h-full flex flex-col">
-            <textarea
-              ref={editTextareaRef}
-              value={editingState.text}
-              onChange={(e) =>
-                setEditingState((prev) => (prev ? { ...prev, text: e.target.value } : null))
-              }
-              onBlur={handleFinishEditing}
-              onKeyDown={(e) => {
-                if (e.key === 'Escape') {
-                  handleFinishEditing();
-                } else if (e.key === 'Enter' && !e.shiftKey) {
-                  e.preventDefault();
-                  handleFinishEditing();
-                }
-              }}
+        (() => {
+          const isSection = editingState.elementType === 'frame';
+          const isCenter =
+            editingState.textAlign === 'center' ||
+            editingState.elementType === 'ellipse' ||
+            editingState.elementType === 'diamond';
+
+          // For Section frame, position the editor directly over its top header tab pill
+          const left = editingState.x * viewport.zoom + viewport.x;
+          const top = isSection
+            ? (editingState.y - 26) * viewport.zoom + viewport.y
+            : editingState.y * viewport.zoom + viewport.y;
+          const width = isSection
+            ? Math.max(Math.min((editingState.text.length || 7) * 9 + 40, editingState.width) * viewport.zoom, 100)
+            : Math.max(editingState.width * viewport.zoom, 60);
+          const height = isSection
+            ? 26 * viewport.zoom
+            : Math.max(editingState.height * viewport.zoom, 32);
+
+          const fontSize = Math.max((editingState.fontSize || (isSection ? 12 : 16)) * viewport.zoom, 11);
+          const textColor = adaptColorForTheme(
+            editingState.strokeColor || (isLight ? '#18181b' : '#f4f4f5'),
+            isLight
+          );
+
+          return (
+            <div
+              className="absolute z-50 pointer-events-auto"
               style={{
-                fontSize: `${Math.max((activeStyle.fontSize || 16) * viewport.zoom, 13)}px`,
+                left: `${left}px`,
+                top: `${top}px`,
+                width: `${width}px`,
+                height: `${height}px`,
               }}
-              placeholder="Type text here..."
-              className={`w-full min-h-[50px] p-2.5 rounded-lg border resize-none outline-none leading-relaxed font-sans shadow-2xl transition-colors ${
-                isLight
-                  ? 'bg-white text-zinc-900 border-zinc-400 placeholder:text-zinc-400 shadow-zinc-400/40'
-                  : 'bg-zinc-900 text-zinc-100 border-zinc-600 placeholder:text-zinc-500 shadow-black/80'
-              }`}
-            />
-            <div className="flex items-center justify-between px-1 pt-1 text-[10px] text-[var(--text-tertiary)] select-none">
-              <span>Enter to save • Shift+Enter for newline</span>
-              <button
-                type="button"
-                onMouseDown={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  handleFinishEditing();
-                }}
-                className="px-2 py-0.5 rounded text-[10px] font-medium bg-zinc-200 dark:bg-zinc-800 hover:bg-zinc-300 dark:hover:bg-zinc-700 text-zinc-900 dark:text-zinc-100 flex items-center gap-1 transition-colors shadow-xs"
+              onMouseDown={(e) => e.stopPropagation()}
+              onMouseUp={(e) => e.stopPropagation()}
+              onClick={(e) => e.stopPropagation()}
+              onPointerDown={(e) => e.stopPropagation()}
+            >
+              <div
+                className={`w-full h-full flex ${
+                  isSection
+                    ? 'items-center px-2 bg-[var(--surface-1)] border border-[var(--border-subtle)] rounded-md shadow-xs'
+                    : editingState.elementType === 'sticky'
+                    ? 'items-start p-3'
+                    : isCenter
+                    ? 'items-center justify-center p-2'
+                    : 'items-center px-3'
+                }`}
               >
-                <Check className="w-3 h-3 text-emerald-500" />
-                Done
-              </button>
+                <textarea
+                  ref={editTextareaRef}
+                  value={editingState.text}
+                  onChange={(e) =>
+                    setEditingState((prev) => (prev ? { ...prev, text: e.target.value } : null))
+                  }
+                  onBlur={handleFinishEditing}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Escape') {
+                      handleFinishEditing();
+                    } else if (e.key === 'Enter' && (!e.shiftKey && (isSection || editingState.elementType !== 'sticky'))) {
+                      e.preventDefault();
+                      handleFinishEditing();
+                    }
+                  }}
+                  style={{
+                    fontSize: `${fontSize}px`,
+                    textAlign: isCenter ? 'center' : 'left',
+                    color: textColor,
+                    fontWeight: isSection ? 600 : 400,
+                    lineHeight: 1.4,
+                  }}
+                  placeholder={isSection ? 'Section name...' : 'Type text...'}
+                  className="w-full h-full bg-transparent border-0 outline-none ring-0 shadow-none resize-none font-sans p-0 m-0 overflow-hidden leading-relaxed placeholder:text-zinc-500/50"
+                  autoFocus
+                />
+              </div>
             </div>
-          </div>
-        </div>
+          );
+        })()
       )}
 
       {/* Floating Canvas Meta HUD: Zoom percentage */}

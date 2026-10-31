@@ -5,6 +5,7 @@ import {
   GapDetectionResult,
   ArtifactGenerationResult,
   AskCanvasResult,
+  FlowCompletionResult,
 } from './types.js';
 import { extractDiagramFlowContext } from './contextExtractor.js';
 
@@ -239,6 +240,63 @@ export class HeuristicAIProvider implements IAIProvider {
       answer: `Looking over the ${workspaceName} canvas, you have ${flow.boxCount} concepts mapped out. Connecting them with arrows will help trace their story.`,
       referencedElementIds: flow.boxes.slice(0, 3).map((b) => b.elementId || b.id || ''),
       suggestedFollowUps: ['Explain canvas flow', 'Generate flow documentation'],
+    };
+  }
+
+  async completeFlow(elementId: string, context: CanvasContextPayload): Promise<FlowCompletionResult> {
+    const { elements, workspaceName = 'sketch out' } = context;
+    const flow = extractDiagramFlowContext(elements, workspaceName);
+
+    // Locate the active target node
+    let targetNode = elements.find(
+      (e) => (e.elementId === elementId || e.id === elementId) && e.type !== 'arrow'
+    );
+
+    // Fallback: pick the last node in the flow or last non-arrow element
+    if (!targetNode && flow.boxes.length > 0) {
+      targetNode = flow.boxes[flow.boxes.length - 1];
+    }
+
+    const label = targetNode?.content?.trim().toLowerCase() || '';
+
+    // Domain heuristic completions
+    if (label.includes('water') || label.includes('vapor') || label.includes('steam')) {
+      return {
+        suggestions: [
+          { label: 'Condensation', type: 'ellipse', relation: 'cools into' },
+          { label: 'Precipitation (Rain)', type: 'ellipse', relation: 'falls as' },
+        ],
+        rationale: 'Completed the thermodynamic water cycle stages.',
+      };
+    }
+
+    if (label.includes('auth') || label.includes('login') || label.includes('user')) {
+      return {
+        suggestions: [
+          { label: 'JWT / Session Token', type: 'rectangle', relation: 'issues' },
+          { label: 'Protected Dashboard', type: 'rectangle', relation: 'authorizes access' },
+        ],
+        rationale: 'Completed standard user authentication and session grant flow.',
+      };
+    }
+
+    if (label.includes('korea') || label.includes('brand') || label.includes('apple') || label.includes('samsung')) {
+      return {
+        suggestions: [
+          { label: 'Global Market', type: 'rectangle', relation: 'exports to' },
+          { label: 'End Consumer', type: 'ellipse', relation: 'delivers to' },
+        ],
+        rationale: 'Extended market distribution flow.',
+      };
+    }
+
+    const fallbackLabel = targetNode?.content?.trim() || 'Next Step';
+    return {
+      suggestions: [
+        { label: `${fallbackLabel} Outcome`, type: 'rectangle', relation: 'results in' },
+        { label: `Review & Verification`, type: 'diamond', relation: 'verifies' },
+      ],
+      rationale: 'Suggested logical progression and verification checkpoint.',
     };
   }
 }

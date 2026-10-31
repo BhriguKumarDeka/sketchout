@@ -51,11 +51,13 @@ export interface CanvasState {
   // Persistence & Data
   decisions: DecisionRecord[];
   artifacts: ArtifactRecord[];
+  allDbArtifacts: ArtifactRecord[];
   gaps: ContextGap[];
 
   // AI & Feedback
   aiStatus: AIStatusInfo;
   isGeneratingArtifact: boolean;
+  isCompletingFlow: boolean;
   aiNotice: string | null;
   toast: ToastInfo | null;
 
@@ -127,6 +129,9 @@ export interface CanvasState {
   generateArtifact: (type?: string) => Promise<any>;
   generateFunctionalDocs: () => Promise<any>;
   deleteArtifactRecord: (artifactId: string) => Promise<void>;
+  fetchAllDbArtifacts: () => Promise<void>;
+  importArtifactToWorkspace: (artifactId: string) => Promise<void>;
+  completeFlowAction: (elementId?: string) => Promise<void>;
   setAiNotice: (notice: string | null) => void;
   showToast: (message: string, type?: 'info' | 'error' | 'success') => void;
   dismissToast: () => void;

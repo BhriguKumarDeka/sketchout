@@ -281,4 +281,134 @@ router.post('/generate-artifact', async (req: Request, res: Response) => {
   }
 });
 
+// AI Flow Completion: Generates 2 downstream nodes and connecting arrows (<150 tokens)
+router.post('/complete-flow', async (req: Request, res: Response) => {
+  try {
+    const { workspaceId, elementId, elements } = req.body;
+
+    const rateCheck = aiRateLimiter.checkRateLimit(req.ip || 'global');
+    if (!rateCheck.allowed) {
+      return res.status(429).json({
+        error: rateCheck.reason,
+        rateLimited: true,
+        retryAfter: rateCheck.retryAfterSeconds,
+      });
+    }
+
+    let canvasElements = elements;
+    if (!canvasElements && workspaceId) {
+      canvasElements = await CanvasElementModel.find({ workspaceId });
+    }
+    canvasElements = normalizeElements(canvasElements);
+
+    const provider = getAIProvider();
+    const payload: CanvasContextPayload = {
+      workspaceName: 'sketch out',
+      elements: canvasElements,
+      decisions: [],
+    };
+
+    const completion = await provider.completeFlow(elementId, payload);
+    const suggestions = completion.suggestions || [];
+
+    // Find reference node to position downstream elements
+    const refNode = canvasElements.find(
+      (e: any) => (e.elementId === elementId || e.id === elementId) && e.type !== 'arrow'
+    ) || canvasElements.filter((e: any) => e.type !== 'arrow').slice(-1)[0];
+
+    let startX = refNode ? refNode.x + (refNode.width || 160) + 90 : 300;
+    let startY = refNode ? refNode.y : 200;
+    let prevId = refNode ? (refNode.elementId || refNode.id) : '';
+    let prevX = refNode ? refNode.x : startX - 160;
+    let prevY = refNode ? refNode.y : startY;
+    let prevW = refNode ? (refNode.width || 160) : 160;
+    let prevH = refNode ? (refNode.height || 80) : 80;
+
+    const createdElements: any[] = [];
+
+    suggestions.forEach((s, idx) => {
+      const nodeW = 160;
+      const nodeH = 80;
+      const nodeX = startX + idx * (nodeW + 90);
+      const nodeY = startY;
+      const newNodeId = `elem-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
+
+      // 1. Create connecting arrow from previous node
+      if (prevId) {
+        const arrowId = `elem-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
+        createdElements.push({
+          id: arrowId,
+          elementId: arrowId,
+          workspaceId: workspaceId || 'default',
+          type: 'arrow',
+          content: s.relation || '',
+          sourceElementId: prevId,
+          targetElementId: newNodeId,
+          sourceId: prevId,
+          targetId: newNodeId,
+          relationshipType: 'LEADS_TO',
+          x: prevX + prevW,
+          y: prevY + prevH / 2,
+          width: nodeX - (prevX + prevW),
+          height: 0,
+          points: [
+            { x: prevX + prevW, y: prevY + prevH / 2 },
+            { x: nodeX, y: nodeY + nodeH / 2 },
+          ],
+          style: {
+            strokeColor: '#ffffff',
+            strokeWidth: 2,
+            roughness: 0,
+            opacity: 1,
+          },
+          zIndex: 5,
+        });
+      }
+
+      // 2. Create the downstream node
+      createdElements.push({
+        id: newNodeId,
+        elementId: newNodeId,
+        workspaceId: workspaceId || 'default',
+        type: s.type || 'rectangle',
+        content: s.label,
+        semanticType: s.semanticType || 'idea',
+        confidence: 'SUGGESTION',
+        x: nodeX,
+        y: nodeY,
+        width: nodeW,
+        height: nodeH,
+        style: {
+          strokeColor: '#ffffff',
+          fillColor: '#18181b',
+          fontSize: 14,
+          textAlign: 'center',
+          strokeWidth: 2,
+          roughness: 0,
+          opacity: 1,
+        },
+        zIndex: 10,
+      });
+
+      // Advance previous pointer for chaining
+      prevId = newNodeId;
+      prevX = nodeX;
+      prevY = nodeY;
+      prevW = nodeW;
+      prevH = nodeH;
+    });
+
+    return res.json({
+      success: true,
+      suggestions,
+      rationale: completion.rationale,
+      createdElements,
+      engine: provider.name,
+    });
+  } catch (err: any) {
+    console.error('Flow Completion error:', err);
+    return res.status(500).json({ error: err.message || 'Failed to complete flow' });
+  }
+});
+
 export default router;

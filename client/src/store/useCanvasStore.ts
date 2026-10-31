@@ -37,11 +37,13 @@ export const useCanvasStore = create<CanvasState>((set, get) => ({
   // Persistence & Data
   decisions: [],
   artifacts: [],
+  allDbArtifacts: [],
   gaps: [],
 
   // AI & Feedback
   aiStatus: { activeEngine: 'Local Heuristic Engine', isLiveGroq: false, groqConfigured: false },
   isGeneratingArtifact: false,
+  isCompletingFlow: false,
   aiNotice: null,
   toast: null,
 
@@ -670,16 +672,84 @@ export const useCanvasStore = create<CanvasState>((set, get) => ({
   },
 
   deleteArtifactRecord: async (artifactId: string) => {
-    const { workspaceId, artifacts } = get();
+    const { workspaceId, artifacts, allDbArtifacts } = get();
     try {
       await api.deleteArtifact(workspaceId, artifactId);
       set({
         artifacts: artifacts.filter((a) => a.artifactId !== artifactId),
+        allDbArtifacts: allDbArtifacts.filter((a) => a.artifactId !== artifactId),
       });
-      get().showToast('Artifact deleted', 'info');
+      get().showToast('Artifact deleted from database', 'info');
     } catch (err: any) {
       console.error('Failed to delete artifact:', err);
       get().showToast('Failed to delete artifact', 'error');
+    }
+  },
+
+  fetchAllDbArtifacts: async () => {
+    const { workspaceId } = get();
+    try {
+      const res = await api.getArtifacts(workspaceId, 'all');
+      if (res && res.artifacts) {
+        set({ allDbArtifacts: res.artifacts });
+      }
+    } catch (err: any) {
+      console.warn('Failed to fetch all DB artifacts:', err);
+    }
+  },
+
+  importArtifactToWorkspace: async (artifactId: string) => {
+    const { workspaceId, artifacts, allDbArtifacts } = get();
+    try {
+      const res = await api.importArtifact(workspaceId, artifactId);
+      if (res && res.artifact) {
+        set({
+          artifacts: [res.artifact, ...artifacts.filter((a) => a.artifactId !== res.artifact.artifactId)],
+          allDbArtifacts: [res.artifact, ...allDbArtifacts],
+        });
+        get().showToast(`Artifact "${res.artifact.title}" linked to workspace!`, 'success');
+      }
+    } catch (err: any) {
+      console.error('Failed to import artifact:', err);
+      get().showToast('Failed to import artifact to workspace', 'error');
+    }
+  },
+
+  completeFlowAction: async (targetElementId?: string) => {
+    const { workspaceId, elements, selectedIds, undoStack } = get();
+    set({ isCompletingFlow: true });
+
+    try {
+      const activeId =
+        targetElementId ||
+        selectedIds[0] ||
+        elements.filter((e) => e.type !== 'arrow').slice(-1)[0]?.id ||
+        '';
+
+      const res = await api.completeFlow(workspaceId, activeId, elements);
+
+      if (res && res.createdElements && res.createdElements.length > 0) {
+        const newElements = [...elements, ...res.createdElements];
+        const lastNode = res.createdElements.filter((e: any) => e.type !== 'arrow').slice(-1)[0];
+
+        set({
+          elements: newElements,
+          selectedIds: lastNode ? [lastNode.id] : selectedIds,
+          undoStack: [...undoStack.slice(-30), elements],
+          redoStack: [],
+          isCompletingFlow: false,
+        });
+
+        get().syncToServer();
+        get().showToast(`AI added ${res.suggestions?.length || 2} steps to complete the flow!`, 'success');
+      } else {
+        set({ isCompletingFlow: false });
+        get().showToast('Could not suggest completion for this step.', 'info');
+      }
+    } catch (err: any) {
+      console.error('completeFlowAction failed:', err);
+      set({ isCompletingFlow: false });
+      get().showToast('Flow completion unavailable', 'error');
     }
   },
 

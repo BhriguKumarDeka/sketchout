@@ -128,9 +128,17 @@ export const api = {
     return res.json();
   },
 
-  // 3. Artifacts (with delete)
-  async getArtifacts(workspaceId: string) {
-    const res = await fetch(`${API_BASE}/workspaces/${workspaceId}/artifacts`);
+  // 3. Artifacts (with delete, scope, and import)
+  async getArtifacts(workspaceId: string, scope?: 'workspace' | 'all') {
+    const url = scope ? `${API_BASE}/workspaces/${workspaceId}/artifacts?scope=${scope}` : `${API_BASE}/workspaces/${workspaceId}/artifacts`;
+    const res = await fetch(url);
+    return res.json();
+  },
+
+  async importArtifact(workspaceId: string, artifactId: string) {
+    const res = await fetch(`${API_BASE}/workspaces/${workspaceId}/artifacts/${artifactId}/import`, {
+      method: 'POST',
+    });
     return res.json();
   },
 
@@ -158,6 +166,15 @@ export const api = {
     } catch {
       return { activeEngine: 'Local Heuristic Engine', isLiveGroq: false, groqConfigured: false };
     }
+  },
+
+  async completeFlow(workspaceId: string, elementId: string, elements: CanvasElement[]) {
+    const res = await fetch(`${API_BASE}/ai/complete-flow`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ workspaceId, elementId, elements }),
+    });
+    return res.json();
   },
 
   async askCanvas(question: string, workspaceId: string, elements: CanvasElement[], mode: 'casual' | 'technical' = 'casual') {

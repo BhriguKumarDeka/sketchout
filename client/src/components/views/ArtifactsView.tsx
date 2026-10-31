@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useCanvasStore } from '../../store/useCanvasStore';
 import {
   FileText,
@@ -12,23 +12,35 @@ import {
   Trash2,
   Eye,
   Code,
+  Database,
+  Plus,
 } from 'lucide-react';
 
 export const ArtifactsView: React.FC = () => {
   const {
+    workspaceId,
     artifacts,
+    allDbArtifacts,
+    fetchAllDbArtifacts,
+    importArtifactToWorkspace,
     generateArtifact,
     deleteArtifactRecord,
     focusElement,
   } = useCanvasStore();
 
+  const [tabScope, setTabScope] = useState<'workspace' | 'all'>('workspace');
   const [selectedArtifactIndex, setSelectedArtifactIndex] = useState(0);
   const [viewMode, setViewMode] = useState<'preview' | 'raw'>('preview');
   const [isGenerating, setIsGenerating] = useState(false);
   const [copied, setCopied] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
-  const currentArtifact = artifacts[selectedArtifactIndex] || artifacts[0];
+  useEffect(() => {
+    fetchAllDbArtifacts();
+  }, [fetchAllDbArtifacts]);
+
+  const activeList = tabScope === 'workspace' ? artifacts : allDbArtifacts;
+  const currentArtifact = activeList[selectedArtifactIndex] || activeList[0];
 
   const handleGenerate = async (type: string) => {
     setIsGenerating(true);
@@ -70,11 +82,44 @@ export const ArtifactsView: React.FC = () => {
     <div className="w-full h-full bg-[var(--bg-canvas)] overflow-hidden flex select-none">
       {/* Sidebar List */}
       <div className="w-72 h-full bg-[var(--surface-1)] border-r border-[var(--border-subtle)] flex flex-col shrink-0">
-        <div className="p-4 border-b border-[var(--border-subtle)] space-y-2">
+        <div className="p-3 border-b border-[var(--border-subtle)] space-y-2">
           <div className="text-xs font-semibold text-[var(--text-primary)]">
             Functional Documentation
           </div>
-          <div className="grid grid-cols-2 gap-1.5 pt-1">
+
+          {/* Scope Selector Tabs */}
+          <div className="flex items-center p-0.5 rounded-lg bg-[var(--surface-2)] text-[11px]">
+            <button
+              onClick={() => {
+                setTabScope('workspace');
+                setSelectedArtifactIndex(0);
+              }}
+              className={`flex-1 py-1 rounded-md font-medium text-center transition-colors ${
+                tabScope === 'workspace'
+                  ? 'bg-[var(--surface-1)] text-[var(--text-primary)] shadow-xs'
+                  : 'text-[var(--text-tertiary)] hover:text-[var(--text-secondary)]'
+              }`}
+            >
+              This Workspace ({artifacts.length})
+            </button>
+            <button
+              onClick={() => {
+                setTabScope('all');
+                fetchAllDbArtifacts();
+                setSelectedArtifactIndex(0);
+              }}
+              className={`flex-1 py-1 rounded-md font-medium text-center transition-colors ${
+                tabScope === 'all'
+                  ? 'bg-[var(--surface-1)] text-[var(--text-primary)] shadow-xs'
+                  : 'text-[var(--text-tertiary)] hover:text-[var(--text-secondary)]'
+              }`}
+              title="View all artifacts stored across the entire database"
+            >
+              All DB ({allDbArtifacts.length})
+            </button>
+          </div>
+
+          <div className="grid grid-cols-2 gap-1.5 pt-0.5">
             <button
               onClick={() => handleGenerate('prd')}
               disabled={isGenerating}
@@ -95,12 +140,14 @@ export const ArtifactsView: React.FC = () => {
         </div>
 
         <div className="flex-1 overflow-y-auto p-2 space-y-1">
-          {artifacts.length === 0 ? (
+          {activeList.length === 0 ? (
             <div className="p-6 text-center text-[var(--text-tertiary)] text-xs">
-              No artifacts generated yet. Click 'Diagram Spec' or 'Tech Flow' above to synthesize from canvas.
+              {tabScope === 'workspace'
+                ? "No artifacts in this workspace. Click 'Diagram Spec' or 'Tech Flow' to synthesize, or switch to 'All DB' to import prior docs."
+                : "No saved artifacts found in the database."}
             </div>
           ) : (
-            artifacts.map((art, idx) => (
+            activeList.map((art, idx) => (
               <div
                 key={art.artifactId || idx}
                 onClick={() => setSelectedArtifactIndex(idx)}
@@ -120,11 +167,32 @@ export const ArtifactsView: React.FC = () => {
                   )}
                 </div>
 
+                {/* Workspace Tag & Import Link for All DB view */}
+                {tabScope === 'all' && (
+                  <div className="flex items-center justify-between pt-1">
+                    <span className="text-[9px] px-1.5 py-0.5 rounded bg-[var(--surface-3)] text-[var(--text-tertiary)] font-mono">
+                      {art.workspaceId === workspaceId ? 'this workspace' : `ws: ${art.workspaceId?.slice(-6) || 'other'}`}
+                    </span>
+                    {art.workspaceId !== workspaceId && (
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          importArtifactToWorkspace(art.artifactId);
+                        }}
+                        className="text-[10px] px-1.5 py-0.5 rounded bg-zinc-800 text-zinc-200 hover:bg-zinc-700 hover:text-white flex items-center gap-1 transition-colors"
+                        title="Link to current workspace"
+                      >
+                        <Plus className="w-2.5 h-2.5" /> Link
+                      </button>
+                    )}
+                  </div>
+                )}
+
                 {/* Quick Delete Artifact Button */}
                 <button
                   onClick={(e) => handleDelete(e, art.artifactId, idx)}
                   disabled={deletingId === art.artifactId}
-                  title="Delete artifact"
+                  title="Delete artifact from database"
                   className="absolute top-2.5 right-2.5 p-1 rounded hover:bg-red-500/10 text-[var(--text-tertiary)] hover:text-red-400 opacity-0 group-hover:opacity-100 transition-all"
                 >
                   <Trash2 className="w-3.5 h-3.5" />
@@ -139,6 +207,24 @@ export const ArtifactsView: React.FC = () => {
       <div className="flex-1 h-full overflow-y-auto p-8 max-w-4xl mx-auto space-y-6">
         {currentArtifact ? (
           <>
+            {currentArtifact.workspaceId && currentArtifact.workspaceId !== workspaceId && (
+              <div className="p-3.5 rounded-xl bg-[var(--surface-2)] border border-[var(--border-subtle)] flex items-center justify-between gap-3 text-xs">
+                <div className="flex items-center gap-2 text-[var(--text-secondary)]">
+                  <Database className="w-4 h-4 text-zinc-400 shrink-0" />
+                  <span>
+                    This artifact belongs to workspace <strong>{currentArtifact.workspaceId}</strong>.
+                  </span>
+                </div>
+                <button
+                  onClick={() => importArtifactToWorkspace(currentArtifact.artifactId)}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-zinc-100 text-zinc-950 hover:bg-white transition-colors shrink-0"
+                >
+                  <Plus className="w-3.5 h-3.5" />
+                  <span>Link to Current Workspace</span>
+                </button>
+              </div>
+            )}
+
             {currentArtifact.isStale && (
               <div className="p-3.5 rounded-xl bg-amber-950/40 border border-amber-800/50 flex items-center justify-between gap-3 text-xs">
                 <div className="flex items-center gap-2 text-amber-300">

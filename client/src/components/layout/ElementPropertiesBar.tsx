@@ -14,6 +14,8 @@ import {
   X,
   BringToFront,
   SendToBack,
+  Zap,
+  Loader2,
 } from 'lucide-react';
 
 export const ElementPropertiesBar: React.FC = () => {
@@ -27,6 +29,8 @@ export const ElementPropertiesBar: React.FC = () => {
     bringToFront,
     sendToBack,
     setActiveStyle,
+    completeFlowAction,
+    isCompletingFlow,
   } = useCanvasStore();
 
   const isLight = theme === 'light';
@@ -69,6 +73,26 @@ export const ElementPropertiesBar: React.FC = () => {
 
   return (
     <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-2 p-1.5 rounded-xl bg-[var(--surface-1)] border border-[var(--border-subtle)] shadow-xl z-30 select-none max-w-[95vw] overflow-x-auto">
+      {/* 0. AI Complete Flow Action (<150 tokens) */}
+      {!isArrowSelected && !isDrawSelected && (
+        <>
+          <button
+            onClick={() => completeFlowAction(primarySelected.id)}
+            disabled={isCompletingFlow}
+            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-zinc-900 hover:bg-zinc-800 text-zinc-100 dark:bg-zinc-100 dark:text-zinc-950 dark:hover:bg-zinc-200 text-xs font-semibold shadow-xs transition-all disabled:opacity-50 shrink-0"
+            title="AI predicts and generates the next 2 downstream steps (<150 tokens)"
+          >
+            {isCompletingFlow ? (
+              <Loader2 className="w-3.5 h-3.5 animate-spin" />
+            ) : (
+              <Zap className="w-3.5 h-3.5 text-amber-500 fill-amber-500" />
+            )}
+            <span>{isCompletingFlow ? 'Completing...' : 'Complete Flow'}</span>
+          </button>
+          <div className="w-[1px] h-4 bg-[var(--border-subtle)]" />
+        </>
+      )}
+
       {/* 1. Arrow Label Customization (Nameless or Custom Name) */}
       {isArrowSelected && (
         <div className="flex items-center gap-1.5 px-2 py-1 rounded-lg bg-[var(--surface-2)]">
