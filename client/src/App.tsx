@@ -22,8 +22,8 @@ export const App: React.FC = () => {
 
   return (
     <div className="w-screen h-screen flex flex-col bg-[var(--bg-canvas)] text-[var(--text-primary)] overflow-hidden">
-      {/* Top Navigation Bar */}
-      <HeaderBar />
+      {/* Top Navigation Bar (Hidden on Introduction Page) */}
+      {activeView !== 'intro' && <HeaderBar />}
 
       {/* Main View Area */}
       <main className="relative flex-1 w-full h-full overflow-hidden">

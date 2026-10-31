@@ -114,9 +114,7 @@ export const HeaderBar: React.FC = () => {
         {/* Brand Logo with Tactile Inset Squircle - Click to open Introduction page */}
         <button
           onClick={() => setActiveView(activeView === 'intro' ? 'canvas' : 'intro')}
-          className={`flex items-center gap-2.5 group text-left cursor-pointer transition-all active:scale-95 px-1.5 py-1 rounded-xl ${
-            activeView === 'intro' ? 'bg-[var(--surface-2)] shadow-xs' : 'hover:bg-[var(--surface-hover)]'
-          }`}
+          className="flex items-center gap-2 group text-left cursor-pointer transition-transform active:scale-95"
           title="Visit Sketch Out Introduction & Guide"
         >
           <div className="w-7 h-7 rounded-[9px] bg-white flex items-center justify-center shadow-[inset_0_2px_4px_rgba(0,0,0,0.14),0_2px_6px_rgba(0,0,0,0.12)] border border-black/10 overflow-hidden p-1 transition-all group-hover:scale-105 group-hover:shadow-[inset_0_2px_4px_rgba(0,0,0,0.2),0_3px_8px_rgba(0,0,0,0.16)]">
@@ -126,36 +124,30 @@ export const HeaderBar: React.FC = () => {
               className="w-full h-full object-contain"
             />
           </div>
-          <div className="flex flex-col">
-            <span className="font-semibold text-sm tracking-tight text-[var(--text-primary)] leading-tight">
-              sketch out
-            </span>
-            {activeView === 'intro' && (
-              <span className="text-[9px] text-[var(--text-tertiary)] font-medium leading-none">
-                Introduction
-              </span>
-            )}
-          </div>
+          <span className="font-semibold text-sm tracking-tight text-[var(--text-primary)] group-hover:text-zinc-400 dark:group-hover:text-zinc-300 transition-colors">
+            sketch out
+          </span>
         </button>
 
         <div className="w-[1px] h-4 bg-[var(--border-subtle)]" />
 
         {/* Workspace Dropdown Trigger */}
         <div className="relative" ref={menuRef}>
-          <div className="flex items-center">
+          <div className="flex items-center bg-[var(--surface-2)]/60 hover:bg-[var(--surface-hover)] rounded-md border border-[var(--border-subtle)] px-2 py-0.5">
+            <span className="text-[10px] text-[var(--text-tertiary)] font-mono mr-1">ws:</span>
             <input
               type="text"
               value={workspaceName}
               onChange={(e) => setWorkspaceName(e.target.value)}
-              className="bg-transparent hover:bg-[var(--surface-hover)] focus:bg-[var(--surface-2)] px-2 py-1 rounded-l text-xs text-[var(--text-secondary)] focus:text-[var(--text-primary)] outline-none border border-transparent focus:border-[var(--border-subtle)] transition-colors w-36 font-medium"
+              className="bg-transparent text-xs text-[var(--text-secondary)] focus:text-[var(--text-primary)] outline-none w-28 font-medium"
               placeholder="Workspace name"
             />
             <button
               onClick={() => setIsWorkspaceMenuOpen(!isWorkspaceMenuOpen)}
-              className="p-1 rounded-r hover:bg-[var(--surface-hover)] text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-colors"
+              className="p-0.5 text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-colors"
               title="Switch or manage workspaces"
             >
-              <ChevronDown className="w-3.5 h-3.5" />
+              <ChevronDown className="w-3 h-3" />
             </button>
           </div>
 
