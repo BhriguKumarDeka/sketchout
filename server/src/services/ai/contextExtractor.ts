@@ -231,12 +231,11 @@ export function extractDiagramFlowContext(
     });
   }
 
-  // Purely for the LLM to populate referencedElementIds JSON array without mentioning IDs in the text
-  text += `\n--- NODE ID LOOKUP (DO NOT CITE THESE IDS IN YOUR PROSE. USE ONLY IN referencedElementIds ARRAY) ---\n`;
+  // Purely list concept labels for context understanding
+  text += `\n--- REGISTERED CONCEPTS ---\n`;
   eligibleNodes.forEach((b) => {
-    const key = getNodeKey(b);
     const label = b.content?.trim() || `${b.type} concept`;
-    text += `"${label}" -> ${key}\n`;
+    text += `* "${label}"\n`;
   });
 
   return {

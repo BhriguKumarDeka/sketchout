@@ -66,10 +66,16 @@ export const IntroductionView: React.FC = () => {
       </nav>
 
       {/* Hero Section */}
-      <section className="pt-16 sm:pt-20 pb-20 px-6 max-w-4xl mx-auto flex flex-col items-center text-center">
+      <section className="pt-16 sm:pt-20 pb-20 px-6 max-w-5xl mx-auto flex flex-col items-center text-center">
         {/* Exact Hero Text with generous breathing space below */}
-        <h1 className="text-4xl sm:text-6xl md:text-7xl font-extrabold text-zinc-950 tracking-tight leading-none mb-24 sm:mb-32">
-          welcome to sketch out
+        <h1 className="text-4xl sm:text-6xl md:text-7xl font-normal text-zinc-800 tracking-tight leading-none mb-24 sm:mb-32">
+          Learn about
+          <br /> 
+          <div className="flex items-center justify-center gap-3 sm:gap-5 text-zinc-950 mt-4">
+            <span className="text-5xl sm:text-7xl md:text-8xl font-black">sketch</span>
+            <img src="/assets/penLogo_cropped.png" alt="Sketch Out Pen" className="h-16 sm:h-20 md:h-24 w-auto object-contain select-none" />
+            <span className="text-5xl sm:text-7xl md:text-8xl font-black">out</span>
+          </div>
         </h1>
 
         {/* Standalone Hero Image with Four Waggle Bees (Two main non-mirrored + two smaller random micro-orbit bees) */}
@@ -124,43 +130,142 @@ export const IntroductionView: React.FC = () => {
         </div>
       </section>
 
-      {/* The Essence of Sketch Out (No AI slop, no meta tags) */}
-      <section className="py-20 px-6 max-w-3xl mx-auto border-t border-zinc-200/70">
-        <div className="space-y-6 text-center sm:text-left">
-          <h2 className="text-2xl sm:text-3xl font-bold text-zinc-950 tracking-tight leading-snug">
-            Thinking shouldn't feel like filling out forms.
-          </h2>
-          <div className="space-y-4 text-zinc-600 text-base leading-relaxed">
-            <p>
-              Most whiteboard apps are digital scratchpads where ideas die as soon as the meeting ends. Most documentation tools force you into rigid bullet points before you even know what you're trying to solve.
-            </p>
-            <p>
-              Sketch Out lives in the space between. It gives you the raw, effortless freedom of pen on paper—place a box, connect an arrow, jot a note—while quietly building an understanding of how everything fits together under the surface.
-            </p>
-          </div>
-        </div>
+      {/* SVG Handdrawn Filter Definition for Uneven Sketch Lines */}
+      <svg className="absolute w-0 h-0 pointer-events-none" aria-hidden="true">
+        <defs>
+          <filter id="sketch-filter" x="-2%" y="-2%" width="104%" height="104%">
+            <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="3" result="noise" />
+            <feDisplacementMap in="SourceGraphic" in2="noise" scale="2.2" xChannelSelector="R" yChannelSelector="G" />
+          </filter>
+        </defs>
+      </svg>
 
-        {/* 3 Core Groundings */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12 pt-8 border-t border-zinc-100">
-          <div className="space-y-2">
-            <h3 className="font-bold text-sm text-zinc-950">The box is the canvas</h3>
-            <p className="text-xs text-zinc-600 leading-relaxed">
-              No modal cards or awkward floating prompts. Double-click any shape and the box itself becomes the typing space.
-            </p>
+      {/* Sketched Bento Grid: Objective & Features (B&W, Colorless Sketch UI, Gapless, Uneven Hand-drawn Borders) */}
+      <section className="py-20 px-6 max-w-4xl mx-auto border-t border-zinc-200/70">
+        <div
+          style={{ filter: 'url(#sketch-filter)' }}
+          className="border-2 border-zinc-950 bg-white grid grid-cols-1 md:grid-cols-3 gap-0 shadow-xs"
+        >
+          {/* Cell 1: Core Objective / Manifesto (Spans 2 cols) */}
+          <div className="md:col-span-2 p-8 md:p-10 border-b md:border-r border-zinc-950 flex flex-col justify-between space-y-6">
+            <div className="space-y-4">
+              <h2 className="text-2xl sm:text-3xl font-extrabold text-zinc-950 tracking-tight leading-snug">
+                Thinking shouldn't feel like filling out forms.
+              </h2>
+              <div className="space-y-3 text-zinc-700 text-sm leading-relaxed">
+                <p>
+                  Most whiteboard tools are digital scratchpads where ideas die as soon as the meeting ends. Most doc tools force you into rigid bullet points before you even know what you're trying to solve.
+                </p>
+                <p>
+                  Sketch Out is the tactile middle ground: raw pen-on-paper freedom where the board quietly builds an understanding of your architecture under the surface.
+                </p>
+              </div>
+            </div>
+
+            {/* Sketched Diagram Doodle */}
+            <div className="pt-4 flex flex-wrap items-center gap-3 text-xs font-mono text-zinc-800">
+              <div className="px-2.5 py-1 border border-zinc-950 rounded-xs">
+                [ raw idea ]
+              </div>
+              <span>──( evolves into )──&gt;</span>
+              <div className="px-2.5 py-1 border border-zinc-950 rounded-xs">
+                [ living architecture ]
+              </div>
+            </div>
           </div>
 
-          <div className="space-y-2">
-            <h3 className="font-bold text-sm text-zinc-950">Arrows carry meaning</h3>
-            <p className="text-xs text-zinc-600 leading-relaxed">
-              Connecting two shapes isn't just drawing a line. It creates a relationship, a pipeline step, or a decision path.
-            </p>
+          {/* Cell 2: The Box Is The Canvas (1 col) */}
+          <div className="md:col-span-1 p-6 md:p-8 border-b border-zinc-950 flex flex-col justify-between space-y-5">
+            <div className="space-y-2">
+              <h3 className="font-extrabold text-base text-zinc-950">The box is the canvas</h3>
+              <p className="text-xs text-zinc-700 leading-relaxed">
+                No floating cards, modal prompts, or plastic gimmicks. Double-click any rectangle or diamond and type directly into the ink.
+              </p>
+            </div>
+            {/* Sketched Doodle */}
+            <div className="p-3 border border-dashed border-zinc-950 rounded-xs bg-[#fafaf9] font-mono text-xs text-zinc-900 flex items-center justify-between">
+              <span>auth_gateway</span>
+              <span className="w-1.5 h-3.5 bg-zinc-950 animate-pulse" />
+            </div>
           </div>
 
-          <div className="space-y-2">
-            <h3 className="font-bold text-sm text-zinc-950">Sketches become specs</h3>
-            <p className="text-xs text-zinc-600 leading-relaxed">
-              When the brainstorm wraps up, your flow synthesizes directly into living documentation with clickable canvas trace links.
-            </p>
+          {/* Cell 3: Arrows Carry Meaning (1 col) */}
+          <div className="md:col-span-1 p-6 md:p-8 border-b md:border-r border-zinc-950 flex flex-col justify-between space-y-5">
+            <div className="space-y-2">
+              <h3 className="font-extrabold text-base text-zinc-950">Arrows carry meaning</h3>
+              <p className="text-xs text-zinc-700 leading-relaxed">
+                Connecting two shapes isn't just a line. It registers relationships, pipeline stages, and decision paths in real time.
+              </p>
+            </div>
+            {/* Sketched Doodle */}
+            <div className="flex items-center justify-between text-xs font-mono text-zinc-800 py-2">
+              <span className="w-8 h-8 rounded-full border border-zinc-950 flex items-center justify-center text-[11px]">A</span>
+              <span className="text-[11px]">──[ verifies ]──&gt;</span>
+              <span className="w-8 h-8 rounded-full border border-zinc-950 flex items-center justify-center text-[11px]">B</span>
+            </div>
+          </div>
+
+          {/* Cell 4: Auto-Complete Flow (1 col) */}
+          <div className="md:col-span-1 p-6 md:p-8 border-b md:border-r border-zinc-950 flex flex-col justify-between space-y-5">
+            <div className="space-y-2">
+              <h3 className="font-extrabold text-base text-zinc-950">Auto-Complete Flow</h3>
+              <p className="text-xs text-zinc-700 leading-relaxed">
+                Stuck on where your flow goes next? Hit complete on any node. Hector predicts the downstream steps for under 150 tokens.
+              </p>
+            </div>
+            {/* Sketched Doodle */}
+            <div className="text-xs font-mono text-zinc-800 space-y-1">
+              <div className="flex items-center gap-1.5">
+                <span className="border border-zinc-950 px-1.5 py-0.5 text-[10px]">Step 1</span>
+                <span>─&gt;</span>
+                <span className="border border-dashed border-zinc-950 px-1.5 py-0.5 text-[10px] text-zinc-600">+2 steps</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Cell 5: Mermaid Code to Canvas (1 col) */}
+          <div className="md:col-span-1 p-6 md:p-8 border-b border-zinc-950 flex flex-col justify-between space-y-5">
+            <div className="space-y-2">
+              <h3 className="font-extrabold text-base text-zinc-950">Mermaid to canvas</h3>
+              <p className="text-xs text-zinc-700 leading-relaxed">
+                Paste raw Mermaid flowchart code and watch it instantiate shapes, connectors, and subgraphs with clean topological layout.
+              </p>
+            </div>
+            {/* Sketched Doodle */}
+            <div className="p-2 border border-zinc-950 font-mono text-[10px] text-zinc-800 bg-[#fafaf9]">
+              <div>graph TD;</div>
+              <div className="pl-2">API ──&gt; Cache;</div>
+            </div>
+          </div>
+
+          {/* Cell 6: Sketches Become Specs (2 cols) */}
+          <div className="md:col-span-2 p-8 md:p-10 border-b md:border-b-0 md:border-r border-zinc-950 flex flex-col justify-between space-y-5">
+            <div className="space-y-2">
+              <h3 className="font-extrabold text-lg text-zinc-950">Sketches become living specs</h3>
+              <p className="text-xs sm:text-sm text-zinc-700 leading-relaxed">
+                When the brainstorm wraps up, your flow synthesizes directly into structured PRDs with interactive trace tags that focus and zoom right back to each whiteboard shape.
+              </p>
+            </div>
+            {/* Sketched Doodle */}
+            <div className="p-3 border border-zinc-950 font-mono text-xs text-zinc-800 flex items-center justify-between">
+              <span># Functional_Spec.md</span>
+              <span className="text-[10px] text-zinc-500 border border-zinc-400 px-1.5 py-0.5">@trace:node-4</span>
+            </div>
+          </div>
+
+          {/* Cell 7: Real Data Flow (1 col) */}
+          <div className="md:col-span-1 p-6 md:p-8 flex flex-col justify-between space-y-5">
+            <div className="space-y-2">
+              <h3 className="font-extrabold text-base text-zinc-950">Real data flow</h3>
+              <p className="text-xs text-zinc-700 leading-relaxed">
+                Zero plastic gimmick toys. Backed by atomic MongoDB upserts, multi-workspace isolation, and offline heuristic sync.
+              </p>
+            </div>
+            {/* Sketched Doodle */}
+            <div className="text-xs font-mono text-zinc-800 flex items-center gap-2">
+              <span className="w-2.5 h-2.5 border border-zinc-950 rounded-full bg-zinc-950" />
+              <span>synced to mongodb</span>
+            </div>
           </div>
         </div>
       </section>
@@ -168,11 +273,6 @@ export const IntroductionView: React.FC = () => {
       {/* Hector AI Interactive Section (hectorImage.png in middle, left & right dialogue on hover) */}
       <section className="py-24 px-6 bg-white border-y border-zinc-200/70 overflow-hidden">
         <div className="max-w-4xl mx-auto flex flex-col items-center">
-          <div className="text-center mb-6">
-            <p className="text-xs text-zinc-400">
-              (Hover over Hector to see what he's thinking)
-            </p>
-          </div>
 
           {/* Hector Showcase Area */}
           <div

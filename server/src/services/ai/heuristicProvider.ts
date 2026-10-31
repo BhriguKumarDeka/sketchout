@@ -216,10 +216,18 @@ export class HeuristicAIProvider implements IAIProvider {
     if (flow.connections.length > 0) {
       const first = flow.connections[0];
       const last = flow.connections[flow.connections.length - 1];
-      const chain = flow.connections.map((c) => `**${c.sourceLabel}** ➔ **${c.targetLabel}**`).join('; ');
+      const conceptLabels = flow.boxes.map((b) => b.content?.trim()).filter(Boolean);
 
-      const casualAnswer = `Looking at the board, there's a clear flow here: it starts with **${first.sourceLabel}** and progresses through to **${last.targetLabel}** (${chain}). In essence, it maps out a progression between these concepts.`;
-      const techAnswer = `The workflow defines a sequential pipeline starting at **${first.sourceLabel}** and culminating in **${last.targetLabel}** across ${flow.connections.length} stages: ${chain}.`;
+      if (lower.includes('essence') || lower.includes('trying to say') || lower.includes('meaning')) {
+        return {
+          answer: `At its core, this board sketches an intuitive progression: moving from **${first.sourceLabel}** through ${conceptLabels.slice(1, -1).map((l) => `**${l}**`).join(' and ') || 'intermediary steps'} to anchor at **${last.targetLabel}**. Rather than mechanical pipeline steps, you're exploring the thematic connection and origins between these ideas.`,
+          referencedElementIds: flow.boxes.map((b) => b.elementId || b.id || ''),
+          suggestedFollowUps: ['How can we expand on this story?', 'Should we map alternative branches?'],
+        };
+      }
+
+      const casualAnswer = `Looking over the board, there is a clear narrative flow that starts with **${first.sourceLabel}** and progresses through to **${last.targetLabel}**. It ties concepts like ${conceptLabels.map((l) => `**${l}**`).join(', ')} together in an intuitive journey.`;
+      const techAnswer = `The flow defines a structured pipeline starting at **${first.sourceLabel}** and concluding at **${last.targetLabel}** across ${flow.connections.length} sequential transitions.`;
 
       return {
         answer: mode === 'technical' ? techAnswer : casualAnswer,

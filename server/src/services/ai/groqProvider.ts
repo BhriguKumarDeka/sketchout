@@ -195,7 +195,8 @@ Respond ONLY in valid JSON matching this schema:
         ? `MODE: CASUAL & ESSENCE (Brainstorming & Human Story)
 - Focus entirely on the human intention, essence, metaphor, story, and creative reasoning behind what was sketched.
 - Absolutely FORBIDDEN phrases and mechanics: NEVER say words like "node", "box", "ellipse", "rectangle", "shape", "arrow", "connector", or IDs like "(ID elem-...)".
-- Instead, talk purely about the concepts, entities, stages, and meanings. For example, instead of "Node A connects to Apple via connector alphabet", say: "It looks like you're playing with alphabet associations or wordplay—starting with the letter 'A' leading into Apple, and tracing tech giants from Apple to Samsung and its home in Korea."
+- NEVER mechanically describe step-by-step connections (e.g. NEVER say "Node A connects to Apple via connector alphabet").
+- When asked "what is the essence" or "explain this", explain the big picture meaning, domain context, and what the creator is exploring or building.
 - Tone: Warm, perceptive, witty, like a brilliant creative collaborator sitting beside you with a coffee.`
         : `MODE: TECHNICAL & ARCHITECTURE (Deep Systems & Engineering)
 - Focus on system design, component boundaries, data contracts, communication protocols, state transitions, failure modes, and scalability.
@@ -214,14 +215,14 @@ CORE RULES:
    - Jump straight into the insight with natural cadence.
 2. NEVER RECITE RAW INTERNAL IDs IN YOUR TEXT:
    - Talk about elements strictly by their labels or names: **Apple**, **Samsung**, **Korea**, or "the letter 'A'".
-   - Put IDs ONLY in the "referencedElementIds" JSON array so the UI can highlight them.
+   - In "referencedElementIds", list the concept labels or IDs so the UI can highlight them.
 3. COLLABORATIVE & THOUGHTFUL:
    - Provide 1-2 constructive, natural follow-ups for the team.
 
 Respond ONLY in valid JSON matching this schema:
 {
   "answer": "Clear, engaging, human colleague answer grounded in the diagram and its domain context",
-  "referencedElementIds": ["node-id-1", "node-id-2"],
+  "referencedElementIds": ["Apple", "Samsung"],
   "suggestedFollowUps": ["Collaborative peer follow-up 1", "Collaborative peer follow-up 2"]
 }`;
 
@@ -236,9 +237,40 @@ Respond ONLY in valid JSON matching this schema:
       });
 
       const parsed = JSON.parse(completion.choices[0]?.message?.content || '{}');
+      let cleanAnswer = (parsed.answer || '')
+        .replace(/\s*\((?:ID\s+)?elem-[a-zA-Z0-9_-]+\)/gi, '')
+        .replace(/\(elem-[a-zA-Z0-9_-]+\)/gi, '')
+        .replace(/elem-[0-9]+-[a-z0-9]+/gi, '')
+        .trim();
+
+      // Resolve referenced element IDs whether the LLM provided IDs or concept labels
+      const labelToId = new Map<string, string>();
+      const validIdSet = new Set<string>();
+      (context.elements || []).forEach((el) => {
+        const id = el.elementId || el.id || '';
+        if (id) {
+          validIdSet.add(id);
+          if (el.content) {
+            labelToId.set(el.content.trim().toLowerCase(), id);
+          }
+        }
+      });
+
+      const resolvedReferences: string[] = [];
+      const rawRefs = Array.isArray(parsed.referencedElementIds) ? parsed.referencedElementIds : [];
+      rawRefs.forEach((ref: string) => {
+        if (typeof ref !== 'string') return;
+        const normalized = ref.trim().toLowerCase();
+        if (validIdSet.has(ref)) {
+          resolvedReferences.push(ref);
+        } else if (labelToId.has(normalized)) {
+          resolvedReferences.push(labelToId.get(normalized)!);
+        }
+      });
+
       return {
-        answer: parsed.answer || 'I looked over the board but could not find a clear match for that.',
-        referencedElementIds: parsed.referencedElementIds || [],
+        answer: cleanAnswer || 'I looked over the board and see what you are outlining. How would you like to develop it?',
+        referencedElementIds: resolvedReferences,
         suggestedFollowUps: parsed.suggestedFollowUps || [],
       };
     } catch (err: any) {
