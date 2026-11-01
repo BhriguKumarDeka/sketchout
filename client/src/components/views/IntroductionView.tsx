@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { useCanvasStore } from '../../store/useCanvasStore';
 import { ChevronDown } from 'lucide-react';
 import { SketchItOutSvg } from './SketchItOutSvg';
+import { InteractiveBeeSwarm } from './InteractiveBeeSwarm';
 
 const FAQS = [
   {
@@ -56,7 +57,7 @@ export const IntroductionView: React.FC = () => {
       </header>
 
       {/* Main Content Area */}
-      <main className="w-full flex-1 flex flex-col items-center">
+      <main className="w-full flex-1 flex flex-col items-center gap-y-30">
         
         {/* HERO SECTION: Spans full width of desktop with responsive scaling grass and hopping waggle bees */}
         <section className="relative w-full overflow-hidden py-10 sm:py-16 md:py-20 lg:py-24 flex items-center justify-center min-h-[560px] sm:min-h-[660px] md:min-h-[760px]">
@@ -79,110 +80,13 @@ export const IntroductionView: React.FC = () => {
             />
           </div>
 
-          {/* Bee 1 (Top right, above right grass): Hopping & signature waggle movement roaming in upper right space */}
-          <motion.div
-            className="absolute right-12 sm:right-28 md:right-40 lg:right-60 top-10 sm:top-14 md:top-18 z-20 pointer-events-none"
-            animate={{
-              x: [0, 22, -14, 28, -8, 0],
-              y: [0, -20, 10, -26, 8, 0],
-              rotate: [0, 10, -8, 14, -5, 0],
-            }}
-            transition={{
-              duration: 7.5,
-              repeat: Infinity,
-              ease: "easeInOut",
-            }}
-          >
-            {/* Signature rapid waggle dance vibration */}
-            <motion.div
-              animate={{
-                rotate: [-12, 12, -10, 14, -12],
-                y: [-2, 2, -1, 2, -2],
-              }}
-              transition={{
-                duration: 0.28,
-                repeat: Infinity,
-                ease: "easeInOut",
-              }}
-            >
-              <img
-                src="/assets/bee_cropped.png"
-                alt="Bee"
-                className="w-8 sm:w-10 h-auto select-none drop-shadow-xs"
-              />
-            </motion.div>
-          </motion.div>
-
-          {/* Bee 2 (Mid-left, next to the word 'it'): Inquisitive roaming hop and waggle */}
-          <motion.div
-            className="absolute left-20 sm:left-36 md:left-52 lg:left-72 top-48 sm:top-60 md:top-68 z-20 pointer-events-none"
-            animate={{
-              x: [0, -18, 12, -22, 8, 0],
-              y: [0, 16, -18, 10, -12, 0],
-              rotate: [0, -12, 8, -10, 6, 0],
-            }}
-            transition={{
-              duration: 6.2,
-              repeat: Infinity,
-              ease: "easeInOut",
-            }}
-          >
-            <motion.div
-              animate={{
-                rotate: [14, -14, 12, -12, 14],
-                y: [-2, 2, -1, 1, -2],
-              }}
-              transition={{
-                duration: 0.22,
-                repeat: Infinity,
-                ease: "easeInOut",
-              }}
-            >
-              <img
-                src="/assets/bee_cropped.png"
-                alt="Bee"
-                className="w-5 sm:w-6 h-auto select-none drop-shadow-xs"
-              />
-            </motion.div>
-          </motion.div>
-
-          {/* Bee 3 (Lower-left, hovering above left grass): Forager hopping patrol */}
-          <motion.div
-            className="absolute left-10 sm:left-24 md:left-36 lg:left-48 bottom-28 sm:bottom-40 md:bottom-48 z-20 pointer-events-none"
-            animate={{
-              x: [0, 26, -16, 20, -10, 0],
-              y: [0, -18, 14, -22, 6, 0],
-              rotate: [0, 8, -12, 10, -6, 0],
-            }}
-            transition={{
-              duration: 8.4,
-              repeat: Infinity,
-              ease: "easeInOut",
-            }}
-          >
-            <motion.div
-              animate={{
-                rotate: [-14, 14, -12, 12, -14],
-                y: [2, -2, 1, -2, 2],
-              }}
-              transition={{
-                duration: 0.3,
-                repeat: Infinity,
-                ease: "easeInOut",
-              }}
-            >
-              <img
-                src="/assets/bee_cropped.png"
-                alt="Bee"
-                className="w-7 sm:w-9 h-auto select-none drop-shadow-xs"
-              />
-            </motion.div>
-          </motion.div>
+          {/* Interactive Autonomous Bee Swarm: Natural hopping & waggle wandering with active cursor repulsion */}
+          <InteractiveBeeSwarm />
 
           {/* Central Hero Artwork: Pure SVG allowing direct manipulation of strokes, width, size, and color */}
           <div className="relative z-10 w-[85vw] max-w-[320px] sm:max-w-[420px] md:max-w-[490px] lg:max-w-[540px] flex justify-center">
             <SketchItOutSvg
-              strokeWidth={2.4}
+              strokeWidth={5}
               strokeColor="#09090b"
               className="w-full h-auto object-contain select-none text-zinc-950 transition-colors"
             />
@@ -190,7 +94,7 @@ export const IntroductionView: React.FC = () => {
         </section>
 
         {/* NARRATIVE SECTION */}
-        <section className="w-full max-w-2xl px-6 mx-auto mt-6 sm:mt-10 text-zinc-900 text-xs sm:text-sm leading-relaxed space-y-3 font-normal text-left">
+        <section className="w-full max-w-4xl px-6 mx-auto mt-6 sm:mt-10 text-zinc-900 text-sm sm:text-lg leading-relaxed space-y-3 font-normal text-left">
           <p>
             Most whiteboard tools are digital scratchpads where ideas die as soon as the meeting ends. Most doc tools force you into rigid bullet points before you even know what you're trying to solve.
           </p>
@@ -200,32 +104,32 @@ export const IntroductionView: React.FC = () => {
         </section>
 
         {/* VISUAL FLOW DIAGRAM & TWO FEATURES */}
-        <section className="w-full max-w-2xl px-6 mx-auto mt-14 sm:mt-20">
+        <section className="w-full max-w-4xl px-6 mx-auto mt-14 sm:mt-20">
           {/* A -> B -> C Flow Diagram */}
           <div className="w-full flex justify-center py-4">
             <img
               src="/assets/introduction/arrowFlow.svg"
               alt="Visual Flow: A to B to C"
-              className="w-full max-w-[480px] sm:max-w-[560px] h-auto object-contain select-none"
+              className="w-full max-w-160 sm:max-w-180 h-auto object-contain select-none"
             />
           </div>
 
           {/* Two Feature Columns */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 sm:gap-12 mt-6 text-left">
             <div>
-              <h3 className="font-bold text-sm sm:text-base text-zinc-950 mb-1.5">
+              <h3 className="font-bold text-lg sm:text-base text-zinc-950 mb-1.5">
                 Arrows carry meaning
               </h3>
-              <p className="text-xs sm:text-[13px] text-zinc-700 leading-relaxed">
+              <p className="text-lg text-zinc-700 leading-relaxed">
                 Connecting two shapes isn't just a line. It registers relationships, pipeline stages, and decision paths in real time.
               </p>
             </div>
 
             <div>
-              <h3 className="font-bold text-sm sm:text-base text-zinc-950 mb-1.5">
+              <h3 className="font-bold text-lg sm:text-base text-zinc-950 mb-1.5">
                 Auto-Complete Flow
               </h3>
-              <p className="text-xs sm:text-[13px] text-zinc-700 leading-relaxed">
+              <p className="text-lg text-zinc-700 leading-relaxed">
                 Stuck on where your flow goes next? Hit complete on any node. Hector predicts the downstream steps for under 150 tokens.
               </p>
             </div>
@@ -233,18 +137,18 @@ export const IntroductionView: React.FC = () => {
         </section>
 
         {/* MEET HECTOR SECTION (Hola speech cloud appears strictly on Hector hover) */}
-        <section className="w-full max-w-2xl px-6 mx-auto mt-18 sm:mt-24 grid grid-cols-1 sm:grid-cols-2 gap-8 items-center">
+        <section className="w-full max-w-4xl px-6 mx-auto mt-18 sm:mt-24 grid grid-cols-1 sm:grid-cols-2 gap-8 items-center">
           {/* Left Column: Hector Capabilities List */}
           <div className="space-y-3 text-left">
-            <h3 className="text-base sm:text-lg font-bold text-zinc-950">
+            <h3 className="text-base sm:text-2xl font-bold text-zinc-950">
               Meet Hector
             </h3>
-            <p className="text-xs sm:text-[13px] text-zinc-700 leading-relaxed">
+            <p className="text-sm sm:text-lg text-zinc-700 leading-relaxed">
               Advanced AI with context awareness.
               <br />
               He can help you with many things.
             </p>
-            <ol className="text-xs sm:text-[13px] text-zinc-800 space-y-1.5 list-decimal list-inside font-normal">
+            <ol className="text-sm sm:text-lg text-zinc-800 space-y-1.5 list-decimal list-inside font-normal">
               <li>Ask Questions about the canvas</li>
               <li>Complete data flows</li>
               <li>Learn about existing gaps</li>
@@ -266,7 +170,7 @@ export const IntroductionView: React.FC = () => {
                   : { opacity: 0, scale: 0.65, y: 14, rotate: -4 }
               }
               transition={{ type: "spring", stiffness: 420, damping: 22 }}
-              className="pointer-events-none mb-[-18px] sm:mb-[-24px] z-10 mr-10 sm:mr-16"
+              className="pointer-events-none z-10 mr-10 sm:mr-16"
             >
               <img
                 src="/assets/introduction/wordCloud.svg"
@@ -277,20 +181,19 @@ export const IntroductionView: React.FC = () => {
 
             {/* Hector Full Standing Figure with subtle hover lift */}
             <motion.div
-              animate={isHectorHovered ? { scale: 1.03, y: -2 } : { scale: 1, y: 0 }}
               transition={{ type: "spring", stiffness: 350, damping: 25 }}
             >
               <img
                 src="/assets/hector_full.png"
                 alt="Hector AI"
-                className="w-32 sm:w-40 md:w-44 h-auto object-contain select-none"
+                className="h-100 object-contain select-none"
               />
             </motion.div>
           </div>
         </section>
 
         {/* FAQ SECTION WITH PENCIL TWIRL */}
-        <section className="w-full max-w-2xl px-6 mx-auto mt-18 sm:mt-24 grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
+        <section className="w-full max-w-4xl px-6 mx-auto mt-18 sm:mt-24 grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
           {/* Left Column: Slanted Pencil Illustration with Motion Twirl on Hover */}
           <div className="md:col-span-4 flex justify-center items-center">
             <motion.div
@@ -322,7 +225,7 @@ export const IntroductionView: React.FC = () => {
                 >
                   <button
                     onClick={() => setExpandedFaqIndex(isOpen ? null : index)}
-                    className="w-full px-4 py-2.5 sm:py-3 flex items-center justify-between text-left text-xs sm:text-[13px] font-normal text-zinc-900 hover:bg-zinc-50/70 transition-colors cursor-pointer"
+                    className="w-full px-4 py-2.5 sm:py-3 flex items-center justify-between text-left text-md font-normal text-zinc-900 hover:bg-zinc-50/70 transition-colors cursor-pointer"
                   >
                     <span>{faq.question}</span>
                     <motion.div
@@ -343,7 +246,7 @@ export const IntroductionView: React.FC = () => {
                         transition={{ duration: 0.22, ease: "easeInOut" }}
                         className="overflow-hidden"
                       >
-                        <div className="px-4 pb-3.5 pt-1 text-xs text-zinc-600 leading-relaxed border-t border-zinc-100">
+                        <div className="px-4 pb-3.5 pt-1 text-md text-zinc-600 leading-relaxed border-t border-zinc-100">
                           {faq.answer}
                         </div>
                       </motion.div>
