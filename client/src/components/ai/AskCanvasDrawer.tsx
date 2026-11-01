@@ -173,7 +173,7 @@ export const AskCanvasDrawer: React.FC = () => {
                       <button
                         key={nodeId}
                         onClick={() => focusElement(nodeId)}
-                        className="text-[10px] font-medium px-2 py-0.5 rounded bg-[var(--surface-3)] text-zinc-300 hover:text-white hover:bg-zinc-700 transition-colors flex items-center gap-1"
+                        className="text-[10px] font-medium px-2 py-0.5 rounded bg-[var(--surface-2)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-hover)] border border-[var(--border-subtle)] transition-colors flex items-center gap-1"
                         title={`Focus "${label}"`}
                       >
                         <span className="truncate max-w-[120px]">{label}</span>
@@ -229,7 +229,7 @@ export const AskCanvasDrawer: React.FC = () => {
           <button
             type="submit"
             disabled={!inputQuestion.trim() || loading}
-            className="p-2 rounded-lg bg-zinc-100 text-zinc-950 hover:bg-white disabled:opacity-30 disabled:pointer-events-none transition-colors"
+            className="p-2 rounded-lg bg-[var(--text-primary)] text-[var(--surface-1)] hover:opacity-90 disabled:opacity-30 disabled:pointer-events-none transition-all shadow-xs"
           >
             <Send className="w-3.5 h-3.5" />
           </button>

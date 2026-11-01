@@ -100,7 +100,7 @@ export const DecisionLedgerView: React.FC = () => {
 
           <button
             onClick={() => setIsAdding(!isAdding)}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs bg-zinc-100 text-zinc-950 font-medium hover:bg-white transition-colors"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs bg-[var(--text-primary)] text-[var(--surface-1)] font-semibold hover:opacity-90 transition-all"
           >
             <Plus className="w-3.5 h-3.5" />
             <span>Record Decision</span>
@@ -160,7 +160,7 @@ export const DecisionLedgerView: React.FC = () => {
             </button>
             <button
               type="submit"
-              className="px-3 py-1.5 rounded-lg text-xs bg-zinc-100 text-zinc-950 font-medium hover:bg-white"
+              className="px-3 py-1.5 rounded-lg text-xs bg-[var(--text-primary)] text-[var(--surface-1)] font-semibold hover:opacity-90 transition-all"
             >
               Save Decision
             </button>
@@ -214,7 +214,7 @@ export const DecisionLedgerView: React.FC = () => {
                     {d.linkedElementIds && d.linkedElementIds.length > 0 ? (
                       <button
                         onClick={() => focusElement(d.linkedElementIds[0])}
-                        className="inline-flex items-center gap-1 font-mono text-[11px] px-2 py-1 rounded bg-[var(--surface-2)] hover:bg-[var(--surface-3)] text-zinc-300 hover:text-white transition-colors"
+                        className="inline-flex items-center gap-1 font-mono text-[11px] px-2 py-1 rounded bg-[var(--surface-2)] hover:bg-[var(--surface-hover)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] border border-[var(--border-subtle)] transition-colors"
                         title="Jump to canvas node"
                       >
                         <Target className="w-3 h-3" />

@@ -178,7 +178,7 @@ export const MermaidImportModal: React.FC<MermaidImportModalProps> = ({ isOpen, 
             </button>
             <button
               onClick={handleImport}
-              className="px-4 py-1.5 rounded-lg text-xs font-medium bg-zinc-100 text-zinc-950 hover:bg-white flex items-center gap-1.5 transition-colors shadow-xs"
+              className="px-4 py-1.5 rounded-lg text-xs font-semibold bg-[var(--text-primary)] text-[var(--surface-1)] hover:opacity-90 flex items-center gap-1.5 transition-all shadow-xs"
             >
               <span>Import to Canvas</span>
               <ArrowRight className="w-3.5 h-3.5" />

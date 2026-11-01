@@ -85,7 +85,7 @@ export const Toolbar: React.FC = () => {
             onClick={() => setActiveTool(t.tool)}
             className={`relative p-2 rounded-lg transition-colors flex items-center justify-center ${
               isActive
-                ? 'bg-zinc-100 text-zinc-950 font-medium shadow-xs'
+                ? 'bg-[var(--text-primary)] text-[var(--surface-1)] font-semibold shadow-xs'
                 : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-hover)]'
             }`}
             title={`${t.label} (${t.shortcut})`}
@@ -109,8 +109,12 @@ export const Toolbar: React.FC = () => {
           title="Stroke & Pen Color Swapper"
         >
           <span
-            className="w-3.5 h-3.5 rounded-full border border-white/20 shrink-0"
-            style={{ backgroundColor: activeStyle.strokeColor || (isLight ? '#18181b' : '#f4f4f5') }}
+            className="w-3.5 h-3.5 rounded-full border border-[var(--border-subtle)] shrink-0"
+            style={{
+              backgroundColor:
+                activeStyle.strokeColor ||
+                (theme === 'cutting-mat' ? '#facc15' : isLight ? '#18181b' : '#f4f4f5'),
+            }}
           />
           <Palette className="w-3.5 h-3.5" />
         </button>
@@ -124,10 +128,17 @@ export const Toolbar: React.FC = () => {
               </div>
               <div className="grid grid-cols-4 gap-1.5">
                 {PALETTE_STROKE_COLORS.map((c) => {
-                  const displayColor = isLight ? c.light : c.dark;
+                  const displayColor =
+                    theme === 'cutting-mat'
+                      ? c.cuttingMat || c.dark
+                      : isLight
+                      ? c.light
+                      : c.dark;
                   const isSelectedColor =
+                    activeStyle.strokeColor?.toLowerCase() === displayColor.toLowerCase() ||
                     activeStyle.strokeColor?.toLowerCase() === c.dark.toLowerCase() ||
-                    activeStyle.strokeColor?.toLowerCase() === c.light.toLowerCase();
+                    activeStyle.strokeColor?.toLowerCase() === c.light.toLowerCase() ||
+                    (c.cuttingMat && activeStyle.strokeColor?.toLowerCase() === c.cuttingMat.toLowerCase());
 
                   return (
                     <button
@@ -137,7 +148,11 @@ export const Toolbar: React.FC = () => {
                       }}
                       className={`w-7 h-7 rounded-md border flex items-center justify-center transition-transform hover:scale-105 ${
                         isSelectedColor
-                          ? 'border-white ring-1 ring-white/60'
+                          ? theme === 'cutting-mat'
+                            ? 'border-yellow-400 ring-2 ring-yellow-400/80'
+                            : isLight
+                            ? 'border-zinc-900 ring-2 ring-zinc-900/40'
+                            : 'border-white ring-1 ring-white/60'
                           : 'border-[var(--border-subtle)]'
                       }`}
                       style={{ backgroundColor: displayColor }}
@@ -159,8 +174,8 @@ export const Toolbar: React.FC = () => {
                     onClick={() => setActiveStyle({ strokeWidth: sw.value })}
                     className={`flex-1 py-1 rounded text-[11px] border transition-colors ${
                       activeStyle.strokeWidth === sw.value
-                        ? 'bg-[var(--surface-2)] text-[var(--text-primary)] border-white/40 font-medium'
-                        : 'text-[var(--text-secondary)] hover:bg-[var(--surface-hover)] border-transparent'
+                        ? 'bg-[var(--surface-3)] text-[var(--text-primary)] border-[var(--border-focus)] font-medium shadow-2xs'
+                        : 'text-[var(--text-secondary)] hover:bg-[var(--surface-hover)] hover:text-[var(--text-primary)] border-transparent'
                     }`}
                   >
                     {sw.label}

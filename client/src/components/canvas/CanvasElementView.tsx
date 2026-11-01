@@ -62,11 +62,11 @@ export const CanvasElementView: React.FC<CanvasElementViewProps> = ({
   const width = Math.max(element.width || 100, 10);
   const height = Math.max(element.height || 60, 10);
 
-  // Adapt colors dynamically with slight saturation/luminance shifts based on light/dark mode
+  // Adapt colors dynamically with slight saturation/luminance shifts based on light/dark/cutting-mat mode
   const rawStroke = element.style.strokeColor || '#f4f4f5';
   const rawFill = element.style.fillColor || 'transparent';
-  const strokeColor = adaptColorForTheme(rawStroke, isLight);
-  const fillColor = adaptColorForTheme(rawFill, isLight);
+  const strokeColor = adaptColorForTheme(rawStroke, theme);
+  const fillColor = adaptColorForTheme(rawFill, theme);
   const strokeWidth = element.style.strokeWidth || 2;
   const strokeDash = element.style.strokeStyle === 'dashed' ? '6 4' : undefined;
 
@@ -118,7 +118,13 @@ export const CanvasElementView: React.FC<CanvasElementViewProps> = ({
             y1={start.y}
             x2={end.x}
             y2={end.y}
-            stroke={isLight ? 'rgba(0, 0, 0, 0.25)' : 'rgba(255, 255, 255, 0.4)'}
+            stroke={
+              theme === 'cutting-mat'
+                ? 'rgba(250, 204, 21, 0.45)'
+                : isLight
+                ? 'rgba(0, 0, 0, 0.25)'
+                : 'rgba(255, 255, 255, 0.4)'
+            }
             strokeWidth={strokeWidth + 4}
             strokeLinecap="round"
           />
@@ -147,8 +153,8 @@ export const CanvasElementView: React.FC<CanvasElementViewProps> = ({
               width={arrowLabel.length * 7.6 + 16}
               height={20}
               rx={10}
-              fill={isLight ? '#ffffff' : '#121215'}
-              stroke={isLight ? '#d4d4d8' : '#3f3f46'}
+              fill={theme === 'cutting-mat' ? '#143526' : isLight ? '#ffffff' : '#121215'}
+              stroke={theme === 'cutting-mat' ? '#facc15' : isLight ? '#d4d4d8' : '#3f3f46'}
               strokeWidth={1}
             />
             <text
@@ -156,7 +162,7 @@ export const CanvasElementView: React.FC<CanvasElementViewProps> = ({
               y={3.5}
               textAnchor="middle"
               className="text-[10px] font-mono tracking-tight font-medium"
-              fill={isLight ? '#18181b' : '#a1a1aa'}
+              fill={theme === 'cutting-mat' ? '#facc15' : isLight ? '#18181b' : '#a1a1aa'}
             >
               {arrowLabel}
             </text>
@@ -171,8 +177,8 @@ export const CanvasElementView: React.FC<CanvasElementViewProps> = ({
               cx={start.x}
               cy={start.y}
               r={6.5}
-              fill={isLight ? '#ffffff' : '#18181b'}
-              stroke={isLight ? '#09090b' : '#ffffff'}
+              fill={theme === 'cutting-mat' ? '#143526' : isLight ? '#ffffff' : '#18181b'}
+              stroke={theme === 'cutting-mat' ? '#facc15' : isLight ? '#09090b' : '#ffffff'}
               strokeWidth={2}
               className="cursor-crosshair hover:scale-125 transition-transform"
               onMouseDown={(e) => {
@@ -185,8 +191,8 @@ export const CanvasElementView: React.FC<CanvasElementViewProps> = ({
               cx={end.x}
               cy={end.y}
               r={6.5}
-              fill={isLight ? '#ffffff' : '#18181b'}
-              stroke={isLight ? '#09090b' : '#ffffff'}
+              fill={theme === 'cutting-mat' ? '#143526' : isLight ? '#ffffff' : '#18181b'}
+              stroke={theme === 'cutting-mat' ? '#facc15' : isLight ? '#09090b' : '#ffffff'}
               strokeWidth={2}
               className="cursor-crosshair hover:scale-125 transition-transform"
               onMouseDown={(e) => {
@@ -222,7 +228,13 @@ export const CanvasElementView: React.FC<CanvasElementViewProps> = ({
           <path
             d={d}
             fill="none"
-            stroke={isLight ? 'rgba(0, 0, 0, 0.2)' : 'rgba(255, 255, 255, 0.35)'}
+            stroke={
+              theme === 'cutting-mat'
+                ? 'rgba(250, 204, 21, 0.45)'
+                : isLight
+                ? 'rgba(0, 0, 0, 0.2)'
+                : 'rgba(255, 255, 255, 0.35)'
+            }
             strokeWidth={strokeWidth + 4}
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -249,19 +261,25 @@ export const CanvasElementView: React.FC<CanvasElementViewProps> = ({
               height={b.height + 8}
               rx={3}
               fill="none"
-              stroke={isLight ? 'rgba(0, 0, 0, 0.45)' : 'rgba(255, 255, 255, 0.45)'}
+              stroke={
+                theme === 'cutting-mat'
+                  ? 'rgba(250, 204, 21, 0.6)'
+                  : isLight
+                  ? 'rgba(0, 0, 0, 0.45)'
+                  : 'rgba(255, 255, 255, 0.45)'
+              }
               strokeWidth={1.5}
               strokeDasharray="4 4"
             />
             {/* 8 Resize grips */}
-            <ResizeHandleGrip isLight={isLight} x={b.minX - 4} y={b.minY - 4} cursor="nwse-resize" onMouseDown={(e) => onStartResize(e, 'nw', element)} />
-            <ResizeHandleGrip isLight={isLight} x={b.minX + b.width / 2 - 4} y={b.minY - 4} cursor="ns-resize" onMouseDown={(e) => onStartResize(e, 'n', element)} />
-            <ResizeHandleGrip isLight={isLight} x={b.minX + b.width - 4} y={b.minY - 4} cursor="nesw-resize" onMouseDown={(e) => onStartResize(e, 'ne', element)} />
-            <ResizeHandleGrip isLight={isLight} x={b.minX + b.width - 4} y={b.minY + b.height / 2 - 4} cursor="ew-resize" onMouseDown={(e) => onStartResize(e, 'e', element)} />
-            <ResizeHandleGrip isLight={isLight} x={b.minX + b.width - 4} y={b.minY + b.height - 4} cursor="nwse-resize" onMouseDown={(e) => onStartResize(e, 'se', element)} />
-            <ResizeHandleGrip isLight={isLight} x={b.minX + b.width / 2 - 4} y={b.minY + b.height - 4} cursor="ns-resize" onMouseDown={(e) => onStartResize(e, 's', element)} />
-            <ResizeHandleGrip isLight={isLight} x={b.minX - 4} y={b.minY + b.height - 4} cursor="nesw-resize" onMouseDown={(e) => onStartResize(e, 'sw', element)} />
-            <ResizeHandleGrip isLight={isLight} x={b.minX - 4} y={b.minY + b.height / 2 - 4} cursor="ew-resize" onMouseDown={(e) => onStartResize(e, 'w', element)} />
+            <ResizeHandleGrip theme={theme} isLight={isLight} x={b.minX - 4} y={b.minY - 4} cursor="nwse-resize" onMouseDown={(e) => onStartResize(e, 'nw', element)} />
+            <ResizeHandleGrip theme={theme} isLight={isLight} x={b.minX + b.width / 2 - 4} y={b.minY - 4} cursor="ns-resize" onMouseDown={(e) => onStartResize(e, 'n', element)} />
+            <ResizeHandleGrip theme={theme} isLight={isLight} x={b.minX + b.width - 4} y={b.minY - 4} cursor="nesw-resize" onMouseDown={(e) => onStartResize(e, 'ne', element)} />
+            <ResizeHandleGrip theme={theme} isLight={isLight} x={b.minX + b.width - 4} y={b.minY + b.height / 2 - 4} cursor="ew-resize" onMouseDown={(e) => onStartResize(e, 'e', element)} />
+            <ResizeHandleGrip theme={theme} isLight={isLight} x={b.minX + b.width - 4} y={b.minY + b.height - 4} cursor="nwse-resize" onMouseDown={(e) => onStartResize(e, 'se', element)} />
+            <ResizeHandleGrip theme={theme} isLight={isLight} x={b.minX + b.width / 2 - 4} y={b.minY + b.height - 4} cursor="ns-resize" onMouseDown={(e) => onStartResize(e, 's', element)} />
+            <ResizeHandleGrip theme={theme} isLight={isLight} x={b.minX - 4} y={b.minY + b.height - 4} cursor="nesw-resize" onMouseDown={(e) => onStartResize(e, 'sw', element)} />
+            <ResizeHandleGrip theme={theme} isLight={isLight} x={b.minX - 4} y={b.minY + b.height / 2 - 4} cursor="ew-resize" onMouseDown={(e) => onStartResize(e, 'w', element)} />
           </g>
         )}
       </g>
@@ -280,7 +298,14 @@ export const CanvasElementView: React.FC<CanvasElementViewProps> = ({
   const capRy = Math.min(height * 0.2, 20);
 
   // Background fallback for sticky
-  const stickyFill = fillColor !== 'transparent' ? fillColor : (isLight ? '#f4f4f5' : '#18181b');
+  const stickyFill =
+    fillColor !== 'transparent'
+      ? fillColor
+      : theme === 'cutting-mat'
+      ? '#1a4230'
+      : isLight
+      ? '#f4f4f5'
+      : '#18181b';
 
   return (
     <g
@@ -300,7 +325,13 @@ export const CanvasElementView: React.FC<CanvasElementViewProps> = ({
           height={height + 8}
           rx={isEllipse ? height / 2 + 4 : 8}
           fill="none"
-          stroke={isLight ? 'rgba(0, 0, 0, 0.45)' : 'rgba(255, 255, 255, 0.45)'}
+          stroke={
+            theme === 'cutting-mat'
+              ? 'rgba(250, 204, 21, 0.65)'
+              : isLight
+              ? 'rgba(0, 0, 0, 0.45)'
+              : 'rgba(255, 255, 255, 0.45)'
+          }
           strokeWidth={1.5}
           strokeDasharray="4 4"
         />
@@ -313,7 +344,7 @@ export const CanvasElementView: React.FC<CanvasElementViewProps> = ({
           height={height + 12}
           rx={8}
           fill="none"
-          stroke={isLight ? '#09090b' : '#ffffff'}
+          stroke={theme === 'cutting-mat' ? '#facc15' : isLight ? '#09090b' : '#ffffff'}
           strokeWidth={2}
           className="animate-pulse"
         />
@@ -329,15 +360,27 @@ export const CanvasElementView: React.FC<CanvasElementViewProps> = ({
             width={Math.min(Math.max((element.content?.length || 7) * 9 + 32, 100), width)}
             height={26}
             rx={6}
-            fill={isLight ? '#f4f4f5' : '#27272a'}
-            stroke={isSelected ? (isLight ? '#18181b' : '#f4f4f5') : (isLight ? '#e4e4e7' : '#3f3f46')}
+            fill={theme === 'cutting-mat' ? '#1a4230' : isLight ? '#f4f4f5' : '#27272a'}
+            stroke={
+              isSelected
+                ? theme === 'cutting-mat'
+                  ? '#facc15'
+                  : isLight
+                  ? '#18181b'
+                  : '#f4f4f5'
+                : theme === 'cutting-mat'
+                ? 'rgba(250, 204, 21, 0.35)'
+                : isLight
+                ? '#e4e4e7'
+                : '#3f3f46'
+            }
             strokeWidth={1}
           />
           {!isEditing && (
             <text
               x={10}
               y={-9}
-              fill={isLight ? '#18181b' : '#f4f4f5'}
+              fill={theme === 'cutting-mat' ? '#facc15' : isLight ? '#18181b' : '#f4f4f5'}
               fontSize={12}
               fontWeight="600"
               letterSpacing="0.02em"
@@ -353,8 +396,28 @@ export const CanvasElementView: React.FC<CanvasElementViewProps> = ({
             width={width}
             height={height}
             rx={10}
-            fill={fillColor !== 'transparent' ? fillColor : isLight ? 'rgba(0, 0, 0, 0.015)' : 'rgba(255, 255, 255, 0.015)'}
-            stroke={isSelected ? (isLight ? '#18181b' : '#f4f4f5') : (isLight ? '#d4d4d8' : '#27272a')}
+            fill={
+              fillColor !== 'transparent'
+                ? fillColor
+                : theme === 'cutting-mat'
+                ? 'rgba(250, 204, 21, 0.02)'
+                : isLight
+                ? 'rgba(0, 0, 0, 0.015)'
+                : 'rgba(255, 255, 255, 0.015)'
+            }
+            stroke={
+              isSelected
+                ? theme === 'cutting-mat'
+                  ? '#facc15'
+                  : isLight
+                  ? '#18181b'
+                  : '#f4f4f5'
+                : theme === 'cutting-mat'
+                ? 'rgba(250, 204, 21, 0.25)'
+                : isLight
+                ? '#d4d4d8'
+                : '#27272a'
+            }
             strokeWidth={isSelected ? 1.5 : 1}
             strokeDasharray="6 4"
           />
@@ -414,7 +477,15 @@ export const CanvasElementView: React.FC<CanvasElementViewProps> = ({
             cy={capRy}
             rx={width / 2}
             ry={capRy}
-            fill={fillColor !== 'transparent' ? fillColor : (isLight ? '#f4f4f5' : '#18181b')}
+            fill={
+              fillColor !== 'transparent'
+                ? fillColor
+                : theme === 'cutting-mat'
+                ? '#1a4230'
+                : isLight
+                ? '#f4f4f5'
+                : '#18181b'
+            }
             stroke={strokeColor}
             strokeWidth={strokeWidth}
           />
@@ -474,7 +545,14 @@ export const CanvasElementView: React.FC<CanvasElementViewProps> = ({
             style={{
               fontSize: `${element.style.fontSize || 16}px`,
               textAlign: element.style.textAlign || (isDiamond || isEllipse ? 'center' : 'left'),
-              color: strokeColor === 'transparent' ? (isLight ? '#09090b' : '#f4f4f5') : strokeColor,
+              color:
+                strokeColor === 'transparent'
+                  ? theme === 'cutting-mat'
+                    ? '#facc15'
+                    : isLight
+                    ? '#09090b'
+                    : '#f4f4f5'
+                  : strokeColor,
               wordBreak: 'break-word',
               overflowWrap: 'break-word',
             }}
@@ -489,7 +567,7 @@ export const CanvasElementView: React.FC<CanvasElementViewProps> = ({
         <text
           x={8}
           y={24}
-          fill={isLight ? '#a1a1aa' : '#52525b'}
+          fill={theme === 'cutting-mat' ? '#a3e635' : isLight ? '#a1a1aa' : '#52525b'}
           fontSize={element.style.fontSize || 16}
           className="font-sans italic select-none"
         >
@@ -506,8 +584,8 @@ export const CanvasElementView: React.FC<CanvasElementViewProps> = ({
             width={18}
             height={18}
             rx={4}
-            fill={isLight ? '#f4f4f5' : '#18181b'}
-            stroke={isLight ? '#d4d4d8' : '#3f3f46'}
+            fill={theme === 'cutting-mat' ? '#143526' : isLight ? '#f4f4f5' : '#18181b'}
+            stroke={theme === 'cutting-mat' ? '#facc15' : isLight ? '#d4d4d8' : '#3f3f46'}
             strokeWidth={0.8}
           />
           <foreignObject x={0} y={0} width={14} height={14}>
@@ -521,14 +599,14 @@ export const CanvasElementView: React.FC<CanvasElementViewProps> = ({
       {/* Resize Handles (8 handles) when selected */}
       {isSelected && (
         <g className="cursor-default">
-          <ResizeHandleGrip isLight={isLight} x={-4} y={-4} cursor="nwse-resize" onMouseDown={(e) => onStartResize(e, 'nw', element)} />
-          <ResizeHandleGrip isLight={isLight} x={width / 2 - 4} y={-4} cursor="ns-resize" onMouseDown={(e) => onStartResize(e, 'n', element)} />
-          <ResizeHandleGrip isLight={isLight} x={width - 4} y={-4} cursor="nesw-resize" onMouseDown={(e) => onStartResize(e, 'ne', element)} />
-          <ResizeHandleGrip isLight={isLight} x={width - 4} y={height / 2 - 4} cursor="ew-resize" onMouseDown={(e) => onStartResize(e, 'e', element)} />
-          <ResizeHandleGrip isLight={isLight} x={width - 4} y={height - 4} cursor="nwse-resize" onMouseDown={(e) => onStartResize(e, 'se', element)} />
-          <ResizeHandleGrip isLight={isLight} x={width / 2 - 4} y={height - 4} cursor="ns-resize" onMouseDown={(e) => onStartResize(e, 's', element)} />
-          <ResizeHandleGrip isLight={isLight} x={-4} y={height - 4} cursor="nesw-resize" onMouseDown={(e) => onStartResize(e, 'sw', element)} />
-          <ResizeHandleGrip isLight={isLight} x={-4} y={height / 2 - 4} cursor="ew-resize" onMouseDown={(e) => onStartResize(e, 'w', element)} />
+          <ResizeHandleGrip theme={theme} isLight={isLight} x={-4} y={-4} cursor="nwse-resize" onMouseDown={(e) => onStartResize(e, 'nw', element)} />
+          <ResizeHandleGrip theme={theme} isLight={isLight} x={width / 2 - 4} y={-4} cursor="ns-resize" onMouseDown={(e) => onStartResize(e, 'n', element)} />
+          <ResizeHandleGrip theme={theme} isLight={isLight} x={width - 4} y={-4} cursor="nesw-resize" onMouseDown={(e) => onStartResize(e, 'ne', element)} />
+          <ResizeHandleGrip theme={theme} isLight={isLight} x={width - 4} y={height / 2 - 4} cursor="ew-resize" onMouseDown={(e) => onStartResize(e, 'e', element)} />
+          <ResizeHandleGrip theme={theme} isLight={isLight} x={width - 4} y={height - 4} cursor="nwse-resize" onMouseDown={(e) => onStartResize(e, 'se', element)} />
+          <ResizeHandleGrip theme={theme} isLight={isLight} x={width / 2 - 4} y={height - 4} cursor="ns-resize" onMouseDown={(e) => onStartResize(e, 's', element)} />
+          <ResizeHandleGrip theme={theme} isLight={isLight} x={-4} y={height - 4} cursor="nesw-resize" onMouseDown={(e) => onStartResize(e, 'sw', element)} />
+          <ResizeHandleGrip theme={theme} isLight={isLight} x={-4} y={height / 2 - 4} cursor="ew-resize" onMouseDown={(e) => onStartResize(e, 'w', element)} />
         </g>
       )}
     </g>
@@ -540,12 +618,13 @@ function isRectangleLike(type: string): boolean {
 }
 
 const ResizeHandleGrip: React.FC<{
+  theme?: string;
   isLight: boolean;
   x: number;
   y: number;
   cursor: string;
   onMouseDown: (e: React.MouseEvent) => void;
-}> = ({ isLight, x, y, cursor, onMouseDown }) => {
+}> = ({ theme, isLight, x, y, cursor, onMouseDown }) => {
   return (
     <rect
       x={x}
@@ -553,8 +632,8 @@ const ResizeHandleGrip: React.FC<{
       width={8}
       height={8}
       rx={1.5}
-      fill={isLight ? '#ffffff' : '#ffffff'}
-      stroke={isLight ? '#09090b' : '#09090b'}
+      fill={theme === 'cutting-mat' ? '#143526' : '#ffffff'}
+      stroke={theme === 'cutting-mat' ? '#facc15' : isLight ? '#09090b' : '#09090b'}
       strokeWidth={1.5}
       style={{ cursor }}
       onMouseDown={(e) => {

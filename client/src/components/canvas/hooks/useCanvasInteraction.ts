@@ -488,7 +488,10 @@ export function useCanvasInteraction({
 
     // Finish Freehand Pen Draw
     if (activeTool === 'draw' && currentDrawPoints.length > 1) {
-      const effectiveStroke = adaptColorForTheme(activeStyle.strokeColor || '#f4f4f5', isLight);
+      const effectiveStroke = adaptColorForTheme(
+        activeStyle.strokeColor || (theme === 'cutting-mat' ? '#facc15' : isLight ? '#18181b' : '#f4f4f5'),
+        theme
+      );
       const minX = Math.min(...currentDrawPoints.map((p) => p.x));
       const minY = Math.min(...currentDrawPoints.map((p) => p.y));
       const maxX = Math.max(...currentDrawPoints.map((p) => p.x));
@@ -524,7 +527,10 @@ export function useCanvasInteraction({
       const targetEl = findConnectableElementAt(worldPos, 50);
       const startPt = arrowDraft.start;
       const endPt = worldPos;
-      const effectiveStroke = adaptColorForTheme(activeStyle.strokeColor || '#a1a1aa', isLight);
+      const effectiveStroke = adaptColorForTheme(
+        activeStyle.strokeColor || (theme === 'cutting-mat' ? '#facc15' : isLight ? '#18181b' : '#a1a1aa'),
+        theme
+      );
 
       const newArrow: CanvasElement = {
         id: `arrow-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
@@ -573,24 +579,30 @@ export function useCanvasInteraction({
       const finalY = rawH > 10 ? minY : Math.round(shapeDraft.start.y - defaultH / 2);
 
       const effectiveStroke = adaptColorForTheme(
-        activeStyle.strokeColor || (isLight ? '#18181b' : '#f4f4f5'),
-        isLight
+        activeStyle.strokeColor || (theme === 'cutting-mat' ? '#facc15' : isLight ? '#18181b' : '#f4f4f5'),
+        theme
       );
       const effectiveFill = adaptColorForTheme(
         activeStyle.fillColor !== 'transparent'
           ? activeStyle.fillColor
           : shapeDraft.type === 'sticky'
-          ? isLight
+          ? theme === 'cutting-mat'
+            ? '#1a4230'
+            : isLight
             ? '#f4f4f5'
             : '#18181b'
           : isFrameShape
-          ? isLight
+          ? theme === 'cutting-mat'
+            ? 'rgba(250, 204, 21, 0.02)'
+            : isLight
             ? 'rgba(0, 0, 0, 0.02)'
             : 'rgba(255, 255, 255, 0.02)'
+          : theme === 'cutting-mat'
+          ? '#143526'
           : isLight
           ? '#ffffff'
           : '#121215',
-        isLight
+        theme
       );
 
       const newShape: CanvasElement = {

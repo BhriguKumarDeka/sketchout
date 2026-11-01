@@ -9,6 +9,7 @@ import {
   TableProperties,
   Sun,
   Moon,
+  Ruler,
   RefreshCw,
   Loader2,
   ChevronDown,
@@ -124,7 +125,7 @@ export const HeaderBar: React.FC = () => {
               className="w-full h-full object-contain"
             />
           </div>
-          <span className="font-semibold text-sm tracking-tight text-[var(--text-primary)] group-hover:text-zinc-400 dark:group-hover:text-zinc-300 transition-colors">
+          <span className="font-semibold text-sm tracking-tight text-[var(--text-primary)] group-hover:opacity-80 transition-opacity">
             sketch out
           </span>
         </button>
@@ -381,10 +382,10 @@ export const HeaderBar: React.FC = () => {
         <button
           onClick={() => generateFunctionalDocs()}
           disabled={isGeneratingArtifact}
-          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all border ${
+          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all border ${
             isGeneratingArtifact
-              ? 'bg-zinc-800 text-zinc-400 border-zinc-700 cursor-not-allowed'
-              : 'bg-zinc-900 hover:bg-zinc-800 text-zinc-100 dark:bg-zinc-100 dark:text-zinc-950 dark:hover:bg-zinc-200 border-transparent shadow-xs'
+              ? 'bg-[var(--surface-2)] text-[var(--text-tertiary)] border-[var(--border-subtle)] cursor-not-allowed'
+              : 'bg-[var(--text-primary)] text-[var(--surface-1)] hover:opacity-90 border-transparent shadow-xs'
           }`}
           title="Synthesize functional documentation from diagram boxes and arrows"
         >
@@ -406,7 +407,7 @@ export const HeaderBar: React.FC = () => {
           onClick={() => setActiveDrawer(activeDrawer === 'ask' ? 'none' : 'ask')}
           className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium transition-colors ${
             activeDrawer === 'ask'
-              ? 'bg-zinc-100 text-zinc-950 font-semibold shadow-xs'
+              ? 'bg-[var(--text-primary)] text-[var(--surface-1)] font-semibold shadow-xs'
               : 'bg-[var(--surface-2)] text-[var(--text-primary)] hover:bg-[var(--surface-hover)] border border-[var(--border-subtle)]'
           }`}
           title="Ask Hector AI about your whiteboard flow"
@@ -419,13 +420,29 @@ export const HeaderBar: React.FC = () => {
 
         <div className="w-[1px] h-4 bg-[var(--border-subtle)] mx-0.5" />
 
-        {/* Theme Toggle */}
+        {/* Theme Toggle: Dark -> Light -> Cutting Mat */}
         <button
           onClick={toggleTheme}
-          className="p-1.5 rounded-lg text-[var(--text-tertiary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-hover)] transition-colors"
-          title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
+          className={`p-1.5 rounded-lg transition-colors flex items-center justify-center ${
+            theme === 'cutting-mat'
+              ? 'text-yellow-400 bg-emerald-950/60 hover:bg-emerald-900 border border-yellow-400/30'
+              : 'text-[var(--text-tertiary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-hover)]'
+          }`}
+          title={
+            theme === 'dark'
+              ? 'Dark mode (click to switch to Light mode)'
+              : theme === 'light'
+              ? 'Light mode (click to switch to Cutting Mat mode)'
+              : 'Cutting Mat mode (click to switch to Dark mode)'
+          }
         >
-          {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+          {theme === 'dark' ? (
+            <Sun className="w-4 h-4" />
+          ) : theme === 'light' ? (
+            <Ruler className="w-4 h-4" />
+          ) : (
+            <Moon className="w-4 h-4 text-yellow-400" />
+          )}
         </button>
       </div>
 

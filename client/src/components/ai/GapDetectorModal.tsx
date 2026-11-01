@@ -96,7 +96,7 @@ export const GapDetectorModal: React.FC = () => {
                     <button
                       key={id}
                       onClick={() => focusElement(id)}
-                      className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-[var(--surface-3)] text-zinc-300 hover:text-white hover:bg-zinc-700 transition-colors flex items-center gap-1"
+                      className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-[var(--surface-2)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-hover)] border border-[var(--border-subtle)] transition-colors flex items-center gap-1"
                     >
                       <Target className="w-2.5 h-2.5" />
                       <span>#{id.slice(0, 6)}</span>

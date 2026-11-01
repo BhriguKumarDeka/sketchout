@@ -96,13 +96,28 @@ export const useCanvasStore = create<CanvasState>((set, get) => ({
 
   setTheme: (theme) => {
     document.documentElement.setAttribute('data-theme', theme);
-    set({ theme });
+    const nextStroke = theme === 'cutting-mat' ? '#facc15' : theme === 'light' ? '#18181b' : '#f4f4f5';
+    set({
+      theme,
+      activeStyle: {
+        ...get().activeStyle,
+        strokeColor: nextStroke,
+      },
+    });
   },
 
   toggleTheme: () => {
-    const nextTheme = get().theme === 'dark' ? 'light' : 'dark';
+    const current = get().theme;
+    const nextTheme = current === 'dark' ? 'light' : current === 'light' ? 'cutting-mat' : 'dark';
     document.documentElement.setAttribute('data-theme', nextTheme);
-    set({ theme: nextTheme });
+    const nextStroke = nextTheme === 'cutting-mat' ? '#facc15' : nextTheme === 'light' ? '#18181b' : '#f4f4f5';
+    set({
+      theme: nextTheme,
+      activeStyle: {
+        ...get().activeStyle,
+        strokeColor: nextStroke,
+      },
+    });
   },
 
   setSelectedIds: (selectedIds) => set({ selectedIds }),

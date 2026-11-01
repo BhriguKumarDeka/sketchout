@@ -79,7 +79,7 @@ export const ElementPropertiesBar: React.FC = () => {
           <button
             onClick={() => completeFlowAction(primarySelected.id)}
             disabled={isCompletingFlow}
-            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-zinc-900 hover:bg-zinc-800 text-zinc-100 dark:bg-zinc-100 dark:text-zinc-950 dark:hover:bg-zinc-200 text-xs font-semibold shadow-xs transition-all disabled:opacity-50 shrink-0"
+            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-[var(--text-primary)] text-[var(--surface-1)] hover:opacity-90 text-xs font-semibold shadow-xs transition-all disabled:opacity-50 shrink-0"
             title="AI predicts and generates the next 2 downstream steps (<150 tokens)"
           >
             {isCompletingFlow ? (
@@ -134,7 +134,7 @@ export const ElementPropertiesBar: React.FC = () => {
             className="bg-transparent text-xs text-[var(--text-primary)] outline-none cursor-pointer"
           >
             {semanticTypes.map((st) => (
-              <option key={st.type} value={st.type} className="bg-zinc-900 text-zinc-100">
+              <option key={st.type} value={st.type} className="bg-[var(--surface-1)] text-[var(--text-primary)]">
                 {st.label}
               </option>
             ))}
@@ -182,10 +182,17 @@ export const ElementPropertiesBar: React.FC = () => {
       <div className="flex items-center gap-1 px-1">
         <span className="text-[10px] text-[var(--text-tertiary)] mr-0.5">Stroke:</span>
         {PALETTE_STROKE_COLORS.map((c) => {
-          const displayColor = isLight ? c.light : c.dark;
+          const displayColor =
+            theme === 'cutting-mat'
+              ? c.cuttingMat || c.dark
+              : isLight
+              ? c.light
+              : c.dark;
           const isSelectedColor =
+            primarySelected.style.strokeColor?.toLowerCase() === displayColor.toLowerCase() ||
             primarySelected.style.strokeColor?.toLowerCase() === c.dark.toLowerCase() ||
-            primarySelected.style.strokeColor?.toLowerCase() === c.light.toLowerCase();
+            primarySelected.style.strokeColor?.toLowerCase() === c.light.toLowerCase() ||
+            (c.cuttingMat && primarySelected.style.strokeColor?.toLowerCase() === c.cuttingMat.toLowerCase());
 
           return (
             <button
@@ -198,7 +205,13 @@ export const ElementPropertiesBar: React.FC = () => {
               }}
               className={`w-4 h-4 rounded-full border transition-transform hover:scale-110 ${
                 isSelectedColor
-                  ? 'ring-1 ring-white/80 scale-110 border-white'
+                  ? theme === 'cutting-mat'
+                    ? 'ring-2 ring-yellow-400 scale-110 border-yellow-400'
+                    : isLight
+                    ? 'ring-2 ring-zinc-900 scale-110 border-zinc-900'
+                    : 'ring-1 ring-white/80 scale-110 border-white'
+                  : isLight
+                  ? 'border-zinc-300'
                   : 'border-white/20'
               }`}
               style={{ backgroundColor: displayColor }}
@@ -215,10 +228,17 @@ export const ElementPropertiesBar: React.FC = () => {
           <div className="flex items-center gap-1 px-1">
             <span className="text-[10px] text-[var(--text-tertiary)] mr-0.5">Fill:</span>
             {PALETTE_FILL_COLORS.map((c) => {
-              const displayColor = isLight ? c.light : c.dark;
+              const displayColor =
+                theme === 'cutting-mat'
+                  ? c.cuttingMat || c.dark
+                  : isLight
+                  ? c.light
+                  : c.dark;
               const isSelectedColor =
+                primarySelected.style.fillColor?.toLowerCase() === displayColor.toLowerCase() ||
                 primarySelected.style.fillColor?.toLowerCase() === c.dark.toLowerCase() ||
-                primarySelected.style.fillColor?.toLowerCase() === c.light.toLowerCase();
+                primarySelected.style.fillColor?.toLowerCase() === c.light.toLowerCase() ||
+                (c.cuttingMat && primarySelected.style.fillColor?.toLowerCase() === c.cuttingMat.toLowerCase());
 
               return (
                 <button
@@ -231,11 +251,24 @@ export const ElementPropertiesBar: React.FC = () => {
                   }}
                   className={`w-4 h-4 rounded-md border transition-transform hover:scale-110 ${
                     isSelectedColor
-                      ? 'ring-1 ring-white/80 scale-110 border-white'
+                      ? theme === 'cutting-mat'
+                        ? 'ring-2 ring-yellow-400 scale-110 border-yellow-400'
+                        : isLight
+                        ? 'ring-2 ring-zinc-900 scale-110 border-zinc-900'
+                        : 'ring-1 ring-white/80 scale-110 border-white'
+                      : isLight
+                      ? 'border-zinc-300'
                       : 'border-white/20'
                   }`}
                   style={{
-                    backgroundColor: displayColor === 'transparent' ? (isLight ? '#f4f4f5' : '#18181b') : displayColor,
+                    backgroundColor:
+                      displayColor === 'transparent'
+                        ? theme === 'cutting-mat'
+                          ? '#143526'
+                          : isLight
+                          ? '#f4f4f5'
+                          : '#18181b'
+                        : displayColor,
                   }}
                   title={c.label}
                 >
@@ -253,24 +286,27 @@ export const ElementPropertiesBar: React.FC = () => {
 
       {/* 6. Stroke Width Selector */}
       <div className="flex items-center gap-0.5">
-        {strokeWidths.map((sw) => (
-          <button
-            key={sw.value}
-            onClick={() => {
-              updateSelectedElements({
-                style: { ...primarySelected.style, strokeWidth: sw.value },
-              });
-              setActiveStyle({ strokeWidth: sw.value });
-            }}
-            className={`px-2 py-0.5 rounded text-[10px] transition-colors ${
-              (primarySelected.style.strokeWidth || 2) === sw.value
-                ? 'bg-[var(--surface-3)] text-white font-medium'
-                : 'text-[var(--text-tertiary)] hover:text-white'
-            }`}
-          >
-            {sw.label}
-          </button>
-        ))}
+        {strokeWidths.map((sw) => {
+          const isSelectedWidth = (primarySelected.style.strokeWidth || 2) === sw.value;
+          return (
+            <button
+              key={sw.value}
+              onClick={() => {
+                updateSelectedElements({
+                  style: { ...primarySelected.style, strokeWidth: sw.value },
+                });
+                setActiveStyle({ strokeWidth: sw.value });
+              }}
+              className={`px-2 py-0.5 rounded text-[10px] transition-colors ${
+                isSelectedWidth
+                  ? 'bg-[var(--surface-3)] text-[var(--text-primary)] font-semibold shadow-2xs'
+                  : 'text-[var(--text-tertiary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-hover)]'
+              }`}
+            >
+              {sw.label}
+            </button>
+          );
+        })}
       </div>
 
       <div className="w-[1px] h-4 bg-[var(--border-subtle)]" />
@@ -286,7 +322,9 @@ export const ElementPropertiesBar: React.FC = () => {
                 })
               }
               className={`p-1.5 rounded transition-colors ${
-                primarySelected.style.textAlign === 'left' ? 'bg-[var(--surface-3)] text-white' : 'text-[var(--text-tertiary)] hover:text-white'
+                primarySelected.style.textAlign === 'left'
+                  ? 'bg-[var(--surface-3)] text-[var(--text-primary)] shadow-2xs'
+                  : 'text-[var(--text-tertiary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-hover)]'
               }`}
               title="Align Left"
             >
@@ -299,7 +337,9 @@ export const ElementPropertiesBar: React.FC = () => {
                 })
               }
               className={`p-1.5 rounded transition-colors ${
-                primarySelected.style.textAlign === 'center' ? 'bg-[var(--surface-3)] text-white' : 'text-[var(--text-tertiary)] hover:text-white'
+                primarySelected.style.textAlign === 'center'
+                  ? 'bg-[var(--surface-3)] text-[var(--text-primary)] shadow-2xs'
+                  : 'text-[var(--text-tertiary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-hover)]'
               }`}
               title="Align Center"
             >
@@ -312,7 +352,9 @@ export const ElementPropertiesBar: React.FC = () => {
                 })
               }
               className={`p-1.5 rounded transition-colors ${
-                primarySelected.style.textAlign === 'right' ? 'bg-[var(--surface-3)] text-white' : 'text-[var(--text-tertiary)] hover:text-white'
+                primarySelected.style.textAlign === 'right'
+                  ? 'bg-[var(--surface-3)] text-[var(--text-primary)] shadow-2xs'
+                  : 'text-[var(--text-tertiary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-hover)]'
               }`}
               title="Align Right"
             >

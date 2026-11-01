@@ -179,7 +179,7 @@ export const ArtifactsView: React.FC = () => {
                           e.stopPropagation();
                           importArtifactToWorkspace(art.artifactId);
                         }}
-                        className="text-[10px] px-1.5 py-0.5 rounded bg-zinc-800 text-zinc-200 hover:bg-zinc-700 hover:text-white flex items-center gap-1 transition-colors"
+                        className="text-[10px] px-1.5 py-0.5 rounded bg-[var(--surface-3)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-hover)] border border-[var(--border-subtle)] flex items-center gap-1 transition-colors"
                         title="Link to current workspace"
                       >
                         <Plus className="w-2.5 h-2.5" /> Link
@@ -217,7 +217,7 @@ export const ArtifactsView: React.FC = () => {
                 </div>
                 <button
                   onClick={() => importArtifactToWorkspace(currentArtifact.artifactId)}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-zinc-100 text-zinc-950 hover:bg-white transition-colors shrink-0"
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-[var(--text-primary)] text-[var(--surface-1)] hover:opacity-90 transition-all shrink-0"
                 >
                   <Plus className="w-3.5 h-3.5" />
                   <span>Link to Current Workspace</span>
@@ -292,7 +292,7 @@ export const ArtifactsView: React.FC = () => {
 
                 <button
                   onClick={handleDownload}
-                  className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs bg-zinc-100 text-zinc-950 font-medium hover:bg-white transition-colors"
+                  className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs bg-[var(--text-primary)] text-[var(--surface-1)] font-semibold hover:opacity-90 transition-all"
                 >
                   <Download className="w-3.5 h-3.5" />
                   <span>Download .md</span>
@@ -454,7 +454,7 @@ function renderFormattedText(text: string, onFocusElement: (id: string) => void)
         <button
           key={`trace-${match.index}`}
           onClick={() => onFocusElement(traceId)}
-          className="inline-flex items-center gap-0.5 px-1.5 py-0.2 mx-1 rounded text-[10px] font-mono bg-[var(--surface-3)] text-zinc-300 hover:text-white border border-[var(--border-subtle)] transition-colors align-middle"
+          className="inline-flex items-center gap-0.5 px-1.5 py-0.2 mx-1 rounded text-[10px] font-mono bg-[var(--surface-2)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-hover)] border border-[var(--border-subtle)] transition-colors align-middle"
           title={`Focus node ${traceId} on canvas`}
         >
           <Target className="w-2.5 h-2.5" />

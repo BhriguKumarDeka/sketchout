@@ -42,22 +42,22 @@ export const IntroductionView: React.FC = () => {
     >
       <div className="w-full min-h-full flex flex-col justify-between">
       {/* Top Header Bar spanning full viewport width */}
-      <header className="w-full px-6 sm:px-12 md:px-16 lg:px-24 py-5 flex items-center justify-between border-b border-zinc-100/60 bg-white/95 backdrop-blur-xs sticky top-0 z-40">
+      <header className="w-full px-6 sm:px-12 md:px-16 lg:px-24 py-5 flex items-center justify-between border-b border-zinc-100/60 bg-white/70 backdrop-blur-xs sticky top-0 z-40">
         <div className="font-semibold text-sm sm:text-base tracking-tight text-black select-none">
-          sketch / out
+          sketchout
         </div>
         <motion.button
           whileHover={{ scale: 1.03 }}
           whileTap={{ scale: 0.97 }}
           onClick={() => setActiveView('canvas')}
-          className="px-4 py-1.5 sm:px-5 sm:py-2 rounded-md sm:rounded-lg bg-black hover:bg-zinc-800 text-white text-[11px] sm:text-xs font-semibold tracking-wider transition-colors cursor-pointer shadow-xs"
+          className="px-12 py-2.5 rounded-md bg-linear-to-b from-neutral-800 to-neutral-950 text-white text-md font-semibold transition-colors tracking-wide cursor-pointer shadow-md"
         >
-          BACK TO CANVAS
+          Canvas
         </motion.button>
       </header>
 
       {/* Main Content Area */}
-      <main className="w-full flex-1 flex flex-col items-center gap-y-30">
+      <main className="w-full flex-1 flex flex-col items-center">
         
         {/* HERO SECTION: Spans full width of desktop with responsive scaling grass and hopping waggle bees */}
         <section className="relative w-full overflow-hidden py-10 sm:py-16 md:py-20 lg:py-24 flex items-center justify-center min-h-[560px] sm:min-h-[660px] md:min-h-[760px]">
@@ -193,18 +193,16 @@ export const IntroductionView: React.FC = () => {
         </section>
 
         {/* FAQ SECTION WITH PENCIL TWIRL */}
-        <section className="w-full max-w-4xl px-6 mx-auto mt-18 sm:mt-24 grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
+        <section className="w-full max-w-4xl px-6 mx-auto mt-40 mb-40 sm:mt-24 grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
           {/* Left Column: Slanted Pencil Illustration with Motion Twirl on Hover */}
           <div className="md:col-span-4 flex justify-center items-center">
             <motion.div
               whileHover={{
-                rotate: [0, -22, 360, 338, 360],
-                scale: 1.1,
+                rotate: [0, -22, 30, 20, 100],
                 transition: { duration: 0.72, ease: "easeInOut" },
               }}
               whileTap={{ scale: 0.94 }}
               className="cursor-pointer select-none"
-              title="Click or hover to twirl!"
             >
               <img
                 src="/assets/pencilLogo_cropped.png"
@@ -259,21 +257,19 @@ export const IntroductionView: React.FC = () => {
         </section>
 
         {/* BOTTOM CTA: "back to canvas" */}
-        <div className="mt-16 sm:mt-20 mb-6">
-          <motion.button
-            whileHover={{ scale: 1.04 }}
-            whileTap={{ scale: 0.96 }}
-            onClick={() => setActiveView('canvas')}
-            className="px-6 py-2 rounded-md bg-black hover:bg-zinc-800 text-white text-xs font-semibold tracking-wide transition-colors cursor-pointer shadow-xs"
-          >
-            back to canvas
-          </motion.button>
-        </div>
+        <motion.button
+          whileHover={{ scale: 1.03 }}
+          whileTap={{ scale: 0.97 }}
+          onClick={() => setActiveView('canvas')}
+          className="px-16 py-2.5 rounded-md bg-linear-to-b from-neutral-800 to-neutral-950 text-white text-md font-semibold transition-colors tracking-wide cursor-pointer shadow-md"
+        >
+          Continue
+        </motion.button>
 
       </main>
 
       {/* FULL-WIDTH GRASS FOOTER: Stretches edge-to-edge across 100% desktop width */}
-      <footer className="w-full overflow-hidden leading-none select-none pointer-events-none mt-4 sm:mt-8">
+      <footer className="w-full overflow-hidden leading-none select-none pointer-events-none mt-20">
         <div className="w-full flex justify-center items-end overflow-hidden">
           <img
             src="/assets/introduction/GrassFooter.svg"

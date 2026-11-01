@@ -101,7 +101,10 @@ export const InfiniteCanvas: React.FC = () => {
     return 'cursor-default';
   };
 
-  const effectiveDrawStroke = adaptColorForTheme(activeStyle.strokeColor || '#f4f4f5', isLight);
+  const effectiveDrawStroke = adaptColorForTheme(
+    activeStyle.strokeColor || (theme === 'cutting-mat' ? '#facc15' : isLight ? '#18181b' : '#f4f4f5'),
+    theme
+  );
 
   return (
     <div
@@ -112,25 +115,69 @@ export const InfiniteCanvas: React.FC = () => {
       onMouseUp={handleMouseUp}
       onContextMenu={(e) => e.preventDefault()}
     >
-      {/* Background Dots Canvas Grid */}
+      {/* Background Canvas Grid: Engineering Cutting Mat Grid in cutting-mat mode, Dot Grid in light/dark */}
       <svg className="absolute inset-0 w-full h-full pointer-events-none">
         <defs>
-          <pattern
-            id="dot-grid"
-            width={24 * viewport.zoom}
-            height={24 * viewport.zoom}
-            patternUnits="userSpaceOnUse"
-            patternTransform={`translate(${viewport.x % (24 * viewport.zoom)}, ${viewport.y % (24 * viewport.zoom)})`}
-          >
-            <circle
-              cx={2}
-              cy={2}
-              r={Math.max(1 * Math.min(viewport.zoom, 1.2), 0.75)}
-              fill={isLight ? '#cbd5e1' : '#27272a'}
-            />
-          </pattern>
+          {theme === 'cutting-mat' ? (
+            <>
+              {/* Fine 20px subgrid */}
+              <pattern
+                id="mat-subgrid"
+                width={20 * viewport.zoom}
+                height={20 * viewport.zoom}
+                patternUnits="userSpaceOnUse"
+                patternTransform={`translate(${viewport.x % (20 * viewport.zoom)}, ${viewport.y % (20 * viewport.zoom)})`}
+              >
+                <path
+                  d={`M ${20 * viewport.zoom} 0 L 0 0 0 ${20 * viewport.zoom}`}
+                  fill="none"
+                  stroke="rgba(250, 204, 21, 0.12)"
+                  strokeWidth="1"
+                />
+              </pattern>
+              {/* Major 100px grid with tick marks */}
+              <pattern
+                id="mat-majorgrid"
+                width={100 * viewport.zoom}
+                height={100 * viewport.zoom}
+                patternUnits="userSpaceOnUse"
+                patternTransform={`translate(${viewport.x % (100 * viewport.zoom)}, ${viewport.y % (100 * viewport.zoom)})`}
+              >
+                <rect
+                  width={100 * viewport.zoom}
+                  height={100 * viewport.zoom}
+                  fill="url(#mat-subgrid)"
+                />
+                <path
+                  d={`M ${100 * viewport.zoom} 0 L 0 0 0 ${100 * viewport.zoom}`}
+                  fill="none"
+                  stroke="rgba(250, 204, 21, 0.35)"
+                  strokeWidth="1.5"
+                />
+              </pattern>
+            </>
+          ) : (
+            <pattern
+              id="dot-grid"
+              width={24 * viewport.zoom}
+              height={24 * viewport.zoom}
+              patternUnits="userSpaceOnUse"
+              patternTransform={`translate(${viewport.x % (24 * viewport.zoom)}, ${viewport.y % (24 * viewport.zoom)})`}
+            >
+              <circle
+                cx={2}
+                cy={2}
+                r={Math.max(1 * Math.min(viewport.zoom, 1.2), 0.75)}
+                fill={isLight ? '#cbd5e1' : '#27272a'}
+              />
+            </pattern>
+          )}
         </defs>
-        <rect width="100%" height="100%" fill="url(#dot-grid)" />
+        <rect
+          width="100%"
+          height="100%"
+          fill={theme === 'cutting-mat' ? 'url(#mat-majorgrid)' : 'url(#dot-grid)'}
+        />
       </svg>
 
       {/* Main World SVG Layer */}
@@ -163,7 +210,13 @@ export const InfiniteCanvas: React.FC = () => {
                   height={(target.height || 60) + 8}
                   rx={target.type === 'ellipse' ? (target.height || 60) / 2 + 4 : 8}
                   fill="none"
-                  stroke={isLight ? 'rgba(59, 130, 246, 0.8)' : 'rgba(96, 165, 250, 0.8)'}
+                  stroke={
+                    theme === 'cutting-mat'
+                      ? '#facc15'
+                      : isLight
+                      ? 'rgba(59, 130, 246, 0.8)'
+                      : 'rgba(96, 165, 250, 0.8)'
+                  }
                   strokeWidth={2}
                   strokeDasharray="4 4"
                   className="pointer-events-none"
@@ -179,7 +232,7 @@ export const InfiniteCanvas: React.FC = () => {
               y1={arrowDraft.start.y}
               x2={arrowDraft.current.x}
               y2={arrowDraft.current.y}
-              stroke={adaptColorForTheme(activeStyle.strokeColor || '#a1a1aa', isLight)}
+              stroke={adaptColorForTheme(activeStyle.strokeColor || '#a1a1aa', theme)}
               strokeWidth={activeStyle.strokeWidth || 2}
               strokeDasharray="4 4"
               strokeLinecap="round"
@@ -195,7 +248,7 @@ export const InfiniteCanvas: React.FC = () => {
               height={Math.max(Math.abs(shapeDraft.current.y - shapeDraft.start.y), 5)}
               rx={shapeDraft.type === 'ellipse' ? 9999 : shapeDraft.type === 'sticky' ? 8 : 4}
               fill="transparent"
-              stroke={isLight ? '#18181b' : '#f4f4f5'}
+              stroke={theme === 'cutting-mat' ? '#facc15' : isLight ? '#18181b' : '#f4f4f5'}
               strokeWidth={1.5}
               strokeDasharray="4 4"
             />
@@ -252,8 +305,8 @@ export const InfiniteCanvas: React.FC = () => {
 
           const fontSize = Math.max((editingState.fontSize || (isSection ? 12 : 16)) * viewport.zoom, 11);
           const textColor = adaptColorForTheme(
-            editingState.strokeColor || (isLight ? '#18181b' : '#f4f4f5'),
-            isLight
+            editingState.strokeColor || (theme === 'cutting-mat' ? '#facc15' : isLight ? '#18181b' : '#f4f4f5'),
+            theme
           );
 
           return (
@@ -314,11 +367,22 @@ export const InfiniteCanvas: React.FC = () => {
       )}
 
       {/* Floating Canvas Meta HUD: Zoom percentage */}
-      <div className="absolute bottom-4 left-4 flex items-center gap-2 px-2.5 py-1.5 rounded-lg bg-[var(--surface-1)] border border-[var(--border-subtle)] text-[11px] font-mono text-[var(--text-secondary)] shadow-sm select-none z-10">
+      <div className="absolute bottom-4 left-4 flex items-center gap-2 px-2.5 py-1.5 rounded-lg bg-[var(--surface-1)] border border-[var(--border-subtle)] text-[11px] font-mono text-[var(--text-secondary)] shadow-sm select-none z-30">
         <span>{Math.round(viewport.zoom * 100)}%</span>
         <span className="w-1 h-1 rounded-full bg-[var(--text-tertiary)]" />
         <span>{elements.length} items</span>
       </div>
+
+      {/* Grass Footer for Cutting Mat Mode (Engineering Workspace with Botanical Coolness) */}
+      {theme === 'cutting-mat' && (
+        <div className="absolute bottom-0 left-0 right-0 pointer-events-none select-none overflow-hidden z-20">
+          <img
+            src="/assets/introduction/GrassFooter.svg"
+            alt="Grass Footer"
+            className="w-full min-w-full h-auto max-h-[75px] sm:max-h-[95px] md:max-h-[120px] object-cover object-bottom block opacity-95 drop-shadow-sm"
+          />
+        </div>
+      )}
     </div>
   );
 };

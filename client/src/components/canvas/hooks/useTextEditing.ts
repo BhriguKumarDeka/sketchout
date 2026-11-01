@@ -105,7 +105,7 @@ export function useTextEditing() {
           style: {
             ...activeStyle,
             fillColor: 'transparent',
-            strokeColor: activeStyle.strokeColor || (isLight ? '#18181b' : '#f4f4f5'),
+            strokeColor: activeStyle.strokeColor || (theme === 'cutting-mat' ? '#facc15' : isLight ? '#18181b' : '#f4f4f5'),
             fontSize,
           },
           zIndex: elements.length + 1,

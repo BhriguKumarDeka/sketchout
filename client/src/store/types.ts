@@ -42,7 +42,7 @@ export interface CanvasState {
   activeStyle: ElementStyle;
   viewport: Viewport;
   activeView: ViewMode;
-  theme: 'dark' | 'light';
+  theme: 'dark' | 'light' | 'cutting-mat';
   isSyncing: boolean;
   isFallbackMode: boolean;
   highlightedElementId: string | null;
@@ -83,7 +83,7 @@ export interface CanvasState {
   setActiveStyle: (style: Partial<ElementStyle>) => void;
   setActiveView: (view: ViewMode) => void;
   setActiveDrawer: (drawer: 'none' | 'ask' | 'gaps' | 'analysis' | 'generate') => void;
-  setTheme: (theme: 'dark' | 'light') => void;
+  setTheme: (theme: 'dark' | 'light' | 'cutting-mat') => void;
   toggleTheme: () => void;
   setSelectedIds: (ids: string[]) => void;
   setViewport: (viewport: Viewport | ((prev: Viewport) => Viewport)) => void;
