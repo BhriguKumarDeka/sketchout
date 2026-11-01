@@ -26,7 +26,7 @@ export const App: React.FC = () => {
       {activeView !== 'intro' && <HeaderBar />}
 
       {/* Main View Area */}
-      <main className="relative flex-1 w-full h-full overflow-hidden">
+      <main className={`relative flex-1 w-full h-full ${activeView === 'intro' ? 'overflow-y-auto overflow-x-hidden' : 'overflow-hidden'}`}>
         {activeView === 'canvas' && (
           <>
             <InfiniteCanvas />

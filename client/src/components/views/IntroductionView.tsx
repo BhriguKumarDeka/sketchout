@@ -33,11 +33,13 @@ export const IntroductionView: React.FC = () => {
   const [isHectorHovered, setIsHectorHovered] = useState(false);
 
   return (
-    // Full desktop width layout strictly in Light Mode
+    // Full desktop width layout strictly in Light Mode with smooth native scrolling
     <div
       data-theme="light"
-      className="w-full min-h-screen overflow-x-hidden overflow-y-auto bg-white text-zinc-900 select-text font-sans scroll-smooth flex flex-col justify-between"
+      className="w-full h-full overflow-y-auto overflow-x-hidden bg-white text-zinc-900 select-text font-sans scroll-smooth"
+      style={{ WebkitOverflowScrolling: 'touch' }}
     >
+      <div className="w-full min-h-full flex flex-col justify-between">
       {/* Top Header Bar spanning full viewport width */}
       <header className="w-full px-6 sm:px-12 md:px-16 lg:px-24 py-5 flex items-center justify-between border-b border-zinc-100/60 bg-white/95 backdrop-blur-xs sticky top-0 z-40">
         <div className="font-semibold text-sm sm:text-base tracking-tight text-black select-none">
@@ -377,6 +379,7 @@ export const IntroductionView: React.FC = () => {
           />
         </div>
       </footer>
+      </div>
     </div>
   );
 };
